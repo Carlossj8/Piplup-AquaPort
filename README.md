@@ -114,6 +114,46 @@ Aspectos documentados en la plantilla:
 * Flujos alternos: Manejo de escenarios excepcionales para batería crítica del drone (<35%), zonas fuera de cobertura y coincidencia de origen y destino.
 * Reglas de negocio: Exclusividad de misión activa por drone y validación obligatoria del umbral mínimo de carga.
 
+### Reto 08: Manual de Identidad y UX/UI
+
+Se estableció el manual de identidad visual y el diseño del panel de monitoreo de flota acuática para el operador, asegurando coherencia visual y cumplimiento de principios de usabilidad antes de la fase de implementación de interfaz.
+
+Aspectos definidos en la identidad:
+* Paleta de colores técnica y ambiental inspirada en entornos hídricos, definiendo tonos primarios y fondos oscuros adecuados para paneles de control continuo.
+* Código cromático semántico de estados: verde para unidades disponibles, azul para drones en misión, ámbar para recarga, gris para mantenimiento y rojo para fallos.
+* Tipografía principal sans-serif de alta legibilidad para interfaces de monitoreo y tipografía monoespaciada para identificadores de drones y códigos de misión.
+* Tono de voz técnico, conciso y contextualizado a la gestión hídrica del campus.
+
+#### Evidencias del Manual de Identidad
+
+![Manual de Identidad - Parte 1](docs/img/reto8man1.png)
+
+![Manual de Identidad - Parte 2](docs/img/reto8man2.png)
+
+![Manual de Identidad - Parte 3](docs/img/reto8man3.png)
+
+#### Evidencias del Mockup de Panel de Flota
+
+![Mockup - Vista General](docs/img/reto8mock1.png)
+
+![Mockup - Estado de Alerta](docs/img/reto8mock2.png)
+
+![Mockup - Detalle de Operación](docs/img/reto8mock3.png)
+
+#### Verificación de Heurísticas de Nielsen
+
+El diseño del panel de monitoreo fue evaluado frente a las heurísticas de usabilidad de Jakob Nielsen, cumpliendo 6 de los 10 principios fundamentales:
+
+| Heurística | Cómo la cumple el mock |
+| :--- | :--- |
+| #1 Visibilidad del estado | Cada tarjeta muestra estado (color, forma y texto), batería y zona sin hacer clic. El resumen superior cuenta los drones por estado. |
+| #2 Relación con el mundo real | Usa el lenguaje del operador: nombres reales de zonas (Embalse Norte, Canal Central...) y estados como "En misión" o "Recargando". |
+| #4 Consistencia | Los mismos 5 colores, formas y textos de estado se usan en el manual y en el panel. Los IDs siempre van en monoespaciada con formato AR-XX. |
+| #5 Prevención de errores | Los drones con batería menor a 35% o no disponibles se atenúan y el botón "Asignar a misión" queda deshabilitado antes de intentar la acción. |
+| #8 Diseño minimalista | Cada tarjeta muestra solo ID, estado, batería y zona: lo necesario para decidir. |
+| #9 Mensajes de error claros | El motivo del bloqueo aparece junto al botón con dato y umbral ("batería insuficiente (18%). Mínimo requerido: 35%"). El fallo muestra un banner con el drone y la zona. |
+
+
 
 
 

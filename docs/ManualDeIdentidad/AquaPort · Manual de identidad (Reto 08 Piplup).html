@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>AquaPort · Manual de identidad (Reto 08 Piplup)</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#F2F7F9;--card:#fff;--ink:#0A2230;--mute:#4F6877;--line:#D3E1E8;--pri:#0B4F6C;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+:root:not([data-theme="light"]){}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#061721;--card:#0C2432;--ink:#E4F0F5;--mute:#93AEBB;--line:#1C3D50;--pri:#19B5D1}}
+:root[data-theme="dark"]{--bg:#061721;--card:#0C2432;--ink:#E4F0F5;--mute:#93AEBB;--line:#1C3D50;--pri:#19B5D1}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.6 "IBM Plex Sans",system-ui,sans-serif}
+.wrap{max-width:980px;margin:0 auto;padding:28px 18px 60px}
+h1{font-size:clamp(28px,5vw,44px);line-height:1.1;margin:0 0 8px;font-weight:700;letter-spacing:-.02em}
+h2{font-size:24px;margin:48px 0 6px;font-weight:600}
+h3{font-size:16px;margin:22px 0 8px;font-weight:600}
+p{margin:0 0 10px;max-width:70ch}.mute{color:var(--mute)}
+.mono{font-family:"JetBrains Mono",ui-monospace,monospace}
+.grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+.sw{background:var(--card);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.sw i{display:block;height:64px}.sw div{padding:10px 12px;font-size:14px}
+.sw b{display:block}.sw code{font-family:"JetBrains Mono",monospace;font-size:13px}
+.tw{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:14px;background:var(--card);border:1px solid var(--line)}
+th,td{padding:9px 12px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{font-weight:600}
+.chip{display:inline-flex;align-items:center;gap:6px;font:600 12px "IBM Plex Sans",sans-serif;padding:3px 9px;border-radius:99px;border:1px solid currentColor;white-space:nowrap}
+.chip::before{content:"";width:8px;height:8px;background:currentColor}
+.c-d{color:#34C77B}.c-d::before{border-radius:50%}
+.c-m{color:#4C9BFF}.c-m::before{border-radius:2px;transform:rotate(45deg)}
+.c-r{color:#F5A524}.c-r::before{border-radius:50% 0 50% 50%}
+.c-x{color:#8C9AA3}.c-x::before{border-radius:0}
+.c-f{color:#FF5C61}.c-f::before{clip-path:polygon(50% 0,100% 100%,0 100%);width:10px}
+/* mock */
+.mock{--mbg:#08202E;--ms:#0F3144;--ml:#1E4358;--mt:#E4F0F5;--mm:#9DB8C5;--ma:#19B5D1;background:var(--mbg);color:var(--mt);border-radius:14px;padding:18px;border:1px solid var(--ml)}
+.mock .bar{display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;align-items:center;margin-bottom:14px}
+.mock .logo{font-weight:700;font-size:18px}.mock .logo span{color:var(--ma)}
+.tabs{display:flex;gap:6px;flex-wrap:wrap}
+.tabs button{background:transparent;color:var(--mm);border:1px solid var(--ml);border-radius:8px;padding:6px 12px;font:500 13px "IBM Plex Sans",sans-serif;cursor:pointer}
+.tabs button[aria-pressed=true]{background:var(--ma);color:#04212B;border-color:var(--ma)}
+.sum{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:14px;font-size:13px;color:var(--mm)}
+.sum b{color:var(--mt);font-family:"JetBrains Mono",monospace}
+.alert{background:#3A1519;border:1px solid #FF5C61;color:#FFD6D8;border-radius:10px;padding:10px 14px;margin-bottom:14px;font-size:14px}
+.drones{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(210px,1fr))}
+.dr{background:var(--ms);border:1px solid var(--ml);border-radius:12px;padding:14px;text-align:left;color:inherit;font:inherit;cursor:pointer;width:100%}
+.dr[aria-pressed=true]{border-color:var(--ma);box-shadow:0 0 0 2px var(--ma)}
+.dr.fail{border-color:#FF5C61;background:#2A1A20}
+.dr .id{font:700 20px "JetBrains Mono",monospace;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.bat{height:8px;background:#05151E;border-radius:4px;margin:12px 0 4px;overflow:hidden}.bat i{display:block;height:100%}
+.row{display:flex;justify-content:space-between;font-size:13px;color:var(--mm)}.row b{color:var(--mt);font-family:"JetBrains Mono",monospace}
+.act{margin-top:14px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;min-height:44px}
+.act button{background:var(--ma);color:#04212B;border:0;border-radius:8px;padding:9px 16px;font:600 14px "IBM Plex Sans",sans-serif;cursor:pointer}
+.act button:disabled{background:#26434F;color:#7F9AA8;cursor:not-allowed}
+.act .why{font-size:13px;color:#FFC773}
+.empty{background:var(--ms);border:1px dashed var(--ml);border-radius:12px;padding:16px;margin-top:12px;font-size:14px;color:var(--mm)}
+.ok{color:#34C77B;font-weight:600}
+button:focus-visible{outline:3px solid #FFD166;outline-offset:2px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>AquaPort · Manual de identidad</h1>
+<p class="mute">Reto 08 · Equipo Piplup. Identidad primero, pantalla después. Panel de control de la flota de 4 drones acuáticos Aqua-Ranger 100 de la ECI.</p>
+
+<h2>1. Concepto</h2>
+<p>AquaPort es una herramienta de trabajo para un operador que decide rápido sobre drones que se mueven sobre agua. La identidad parte de tres ideas: <b>profundidad</b> (azules oscuros que cansan menos la vista en turnos de monitoreo), <b>precisión</b> (cian técnico y datos en monoespaciada) y <b>entorno natural</b> (verde de monitoreo ambiental reservado para "todo bien").</p>
+
+<h2>2. Paleta de marca</h2>
+<div class="grid">
+<div class="sw"><i style="background:#0B4F6C"></i><div><b>Azul profundo</b><code>#0B4F6C</code><br><span class="mute">Primario. Encabezados, navegación y fondos de énfasis. Evoca agua de embalse.</span></div></div>
+<div class="sw"><i style="background:#19B5D1"></i><div><b>Cian técnico</b><code>#19B5D1</code><br><span class="mute">Acento. Acciones principales, selección y foco. Da sensación de instrumento.</span></div></div>
+<div class="sw"><i style="background:#08202E"></i><div><b>Abismo</b><code>#08202E</code><br><span class="mute">Fondo del panel. Oscuro y azulado: reduce fatiga y hace resaltar los estados.</span></div></div>
+<div class="sw"><i style="background:#0F3144"></i><div><b>Superficie</b><code>#0F3144</code><br><span class="mute">Tarjetas y paneles sobre Abismo. Bordes en <code>#1E4358</code>.</span></div></div>
+<div class="sw"><i style="background:#E4F0F5"></i><div><b>Espuma</b><code>#E4F0F5</code><br><span class="mute">Texto principal sobre fondo oscuro (contraste mayor a 12:1). Texto secundario <code>#9DB8C5</code>.</span></div></div>
+</div>
+
+<h2>3. Colores de estado</h2>
+<p>Son críticos para el operador. Cada estado combina color, forma del indicador y texto, así que no dependen solo del color (accesible para daltonismo).</p>
+<div class="tw"><table>
+<tr><th>Estado</th><th>Hex</th><th>Indicador</th><th>Uso</th></tr>
+<tr><td>Disponible</td><td class="mono">#34C77B</td><td><span class="chip c-d">Disponible</span></td><td>Listo para asignar (batería ≥ 35%).</td></tr>
+<tr><td>En misión</td><td class="mono">#4C9BFF</td><td><span class="chip c-m">En misión</span></td><td>Ejecutando ruta predefinida.</td></tr>
+<tr><td>Recargando</td><td class="mono">#F5A524</td><td><span class="chip c-r">Recargando</span></td><td>No asignable hasta recuperar batería.</td></tr>
+<tr><td>Mantenimiento</td><td class="mono">#8C9AA3</td><td><span class="chip c-x">Mantenimiento</span></td><td>Fuera de servicio programado.</td></tr>
+<tr><td>Fallo</td><td class="mono">#FF5C61</td><td><span class="chip c-f">Fallo</span></td><td>Requiere atención inmediata; tarjeta resaltada.</td></tr>
+</table></div>
+<p class="mute" style="margin-top:8px">Reglas: el rojo solo se usa para fallos y errores; el verde solo para disponible o confirmaciones; el cian nunca indica estado, solo interacción.</p>
+
+<h2>4. Tipografía</h2>
+<div class="grid">
+<div class="sw"><div><b style="font-size:26px;font-family:'IBM Plex Sans',sans-serif">IBM Plex Sans</b>Interfaz: títulos, etiquetas, botones y mensajes. Pesos 400, 500, 600 y 700. Sans-serif técnica, muy legible en pantallas de monitoreo.</div></div>
+<div class="sw"><div><b class="mono" style="font-size:26px">JetBrains Mono</b>IDs de drones (<span class="mono">AR-03</span>), códigos de misión (<span class="mono">MS-0142</span>) y porcentajes. Pesos 500 y 700. Cada carácter mide lo mismo, así que los IDs se comparan de un vistazo.</div></div>
+</div>
+<p style="margin-top:10px">Escala: 12–13 px datos secundarios · 14–16 px cuerpo · 20 px ID de drone · 24 px títulos de sección · 28–44 px título de pantalla. Fallback: <code class="mono">system-ui, sans-serif</code> y <code class="mono">ui-monospace, monospace</code>.</p>
+
+<h2>5. Tono de voz</h2>
+<p>Técnico, preciso y ambiental. Mensajes directos, en español neutro, en voz activa, con el dato exacto y qué hacer a continuación. Sin disculpas ni frases vagas.</p>
+<div class="tw"><table>
+<tr><th>Situación</th><th>Sí</th><th>No</th></tr>
+<tr><td>Batería baja</td><td>"El drone AR-03 tiene batería insuficiente (18%). Mínimo requerido: 35%."</td><td>"Error de asignación"</td></tr>
+<tr><td>Fallo</td><td>"AR-04 reporta fallo en Laguna Sur. Retira el drone de la asignación."</td><td>"¡Ups! Algo salió mal"</td></tr>
+<tr><td>Sin drones</td><td>"No hay drones disponibles. AR-02 se libera al terminar su misión."</td><td>"Nada por aquí"</td></tr>
+</table></div>
+
+<h2>6. Mock: Panel de monitoreo de la flota</h2>
+<p>Aplica la identidad de arriba. Es interactivo: cambia entre los 3 estados de la pantalla y selecciona un drone.</p>
+<div class="mock" id="mock">
+<div class="bar"><div class="logo">Aqua<span>Port</span> · Flota acuática</div>
+<div class="tabs" role="group" aria-label="Estado de la pantalla">
+<button data-s="normal" aria-pressed="true">Normal</button><button data-s="alerta" aria-pressed="false">Alerta</button><button data-s="vacio" aria-pressed="false">Sin disponibles</button></div></div>
+<div class="sum" id="sum"></div>
+<div id="alert"></div>
+<div class="drones" id="drones"></div>
+<div class="act"><button id="asig" disabled>Asignar a misión</button><span class="why" id="why">Selecciona un drone para continuar.</span></div>
+<div id="empty"></div>
+</div>
+
+<h2>7. Verificación de Nielsen</h2>
+<p>El mock cumple 6 de los 10 principios (el reto pide al menos 5).</p>
+<div class="tw"><table>
+<tr><th>Heurística</th><th>Cómo la cumple el mock</th></tr>
+<tr><td>#1 Visibilidad del estado</td><td>Cada tarjeta muestra estado (color, forma y texto), batería y zona sin hacer clic. El resumen superior cuenta los drones por estado.</td></tr>
+<tr><td>#2 Relación con el mundo real</td><td>Usa el lenguaje del operador: nombres reales de zonas (Embalse Norte, Canal Central…) y estados como "En misión" o "Recargando".</td></tr>
+<tr><td>#4 Consistencia</td><td>Los mismos 5 colores, formas y textos de estado se usan en el manual y en el panel. Los IDs siempre van en monoespaciada con formato AR-XX.</td></tr>
+<tr><td>#5 Prevención de errores</td><td>Los drones con batería menor a 35% o no disponibles se atenúan y el botón "Asignar a misión" queda deshabilitado antes de intentar la acción.</td></tr>
+<tr><td>#8 Diseño minimalista</td><td>Cada tarjeta muestra solo ID, estado, batería y zona: lo necesario para decidir.</td></tr>
+<tr><td>#9 Mensajes de error claros</td><td>El motivo del bloqueo aparece junto al botón con dato y umbral ("batería insuficiente (18%). Mínimo requerido: 35%"). El fallo muestra un banner con el drone y la zona.</td></tr>
+</table></div>
+</div>
+
+<script>
+const D={
+normal:[["AR-01",86,"D","Laboratorio Hídrico"],["AR-02",62,"M","Canal Central"],["AR-03",18,"R","Embalse Norte"],["AR-04",74,"X","Laguna Sur"]],
+alerta:[["AR-01",86,"D","Laboratorio Hídrico"],["AR-02",62,"M","Canal Central"],["AR-03",41,"R","Embalse Norte"],["AR-04",55,"F","Laguna Sur"]],
+vacio:[["AR-01",78,"M","Punto Ribereño Este"],["AR-02",62,"M","Canal Central"],["AR-03",90,"M","Embalse Norte"],["AR-04",67,"M","Laguna Sur"]]};
+const E={D:["Disponible","c-d","#34C77B"],M:["En misión","c-m","#4C9BFF"],R:["Recargando","c-r","#F5A524"],X:["Mantenimiento","c-x","#8C9AA3"],F:["Fallo","c-f","#FF5C61"]};
+let st="normal",sel=null;
+const $=id=>document.getElementById(id);
+function can(d){return d[2]==="D"&&d[1]>=35}
+function why(d){
+ if(d[2]==="F")return `${d[0]} reporta fallo en ${d[3]}. Retira el drone de la asignación.`;
+ if(d[2]==="M")return `${d[0]} está en misión. Espera a que termine para asignarlo.`;
+ if(d[2]==="X")return `${d[0]} está en mantenimiento y no se puede asignar.`;
+ if(d[1]<35)return `El drone ${d[0]} tiene batería insuficiente (${d[1]}%). Mínimo requerido: 35%.`;
+ return `${d[0]} listo para asignar en ${d[3]}.`}
+function render(){
+ const L=D[st],c={};L.forEach(d=>c[d[2]]=(c[d[2]]||0)+1);
+ $("sum").innerHTML=Object.keys(E).map(k=>`<span>${E[k][0]} <b>${c[k]||0}</b></span>`).join("");
+ const f=L.find(d=>d[2]==="F");
+ $("alert").innerHTML=f?`<div class="alert" role="alert"><b class="mono">${f[0]}</b> reporta fallo en ${f[3]}. Retira el drone de la asignación y avisa a mantenimiento.</div>`:"";
+ $("drones").innerHTML=L.map((d,i)=>{const e=E[d[2]],blocked=!can(d);
+ return `<button class="dr ${d[2]==="F"?"fail":""}" data-i="${i}" aria-pressed="${sel===i}" style="${blocked&&d[2]!=="F"?"opacity:.72":""}">
+ <div class="id">${d[0]}<span class="chip ${e[1]}">${e[0]}</span></div>
+ <div class="bat" aria-hidden="true"><i style="width:${d[1]}%;background:${d[1]<35?"#FF5C61":e[2]}"></i></div>
+ <div class="row"><span>Batería</span><b>${d[1]}%</b></div><div class="row"><span>Zona</span><b style="font-family:'IBM Plex Sans',sans-serif">${d[3]}</b></div></button>`}).join("");
+ const d=sel===null?null:L[sel];
+ $("asig").disabled=!d||!can(d);
+ $("why").textContent=d?why(d):"Selecciona un drone para continuar.";
+ $("why").className="why"+(d&&can(d)?" ok":"");
+ $("empty").innerHTML=st==="vacio"?`<div class="empty"><b style="color:#E4F0F5">No hay drones disponibles.</b> Los 4 drones están en misión. AR-02 es el siguiente en liberarse; vuelve a consultar cuando termine su ruta en Canal Central.</div>`:"";
+}
+$("drones").addEventListener("click",e=>{const b=e.target.closest(".dr");if(!b)return;const i=+b.dataset.i;sel=sel===i?null:i;render()});
+document.querySelector(".tabs").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;st=b.dataset.s;sel=null;
+ document.querySelectorAll(".tabs button").forEach(x=>x.setAttribute("aria-pressed",x===b));render()});
+$("asig").addEventListener("click",()=>{$("why").textContent=`Drone ${D[st][sel][0]} asignado. Registra la misión para confirmar.`;$("why").className="why ok"});
+render();
+</script>
+</body>
+</html>
