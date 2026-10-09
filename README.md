@@ -47,3 +47,73 @@ Aspectos implementados:
 * Pruebas unitarias en JUnit 5 que comprueban tanto la construcción exitosa como el lanzamiento de IllegalStateException en cada caso inválido.
 
 ![Evidencia Reto 03](docs/img/reto-03-builder.png)
+
+### Reto 04: Principios SOLID (SRP y DIP)
+
+Se rediseñó el núcleo del sistema aplicando el Principio de Responsabilidad Única (SRP) y el Principio de Inversión de Dependencias (DIP) para eliminar el acoplamiento y la acumulación de responsabilidades.
+
+Aspectos implementados:
+* Segregación de responsabilidades mediante clases especializadas: RegistradorMisiones coordina el flujo, ValidadorMision encapsula las reglas de negocio, y NotificadorOperador gestiona la comunicación con el usuario.
+* Definición de la interfaz RepositorioMisiones en la capa de dominio, aislando la lógica de negocio de los detalles de almacenamiento.
+* Implementación en memoria RepositorioMisionesMemoria ubicada en infraestructura.
+* Inyección de dependencias por constructor en RegistradorMisiones, permitiendo desacoplamiento total y facilitando el uso de dobles de prueba.
+* Pruebas unitarias que verifican validaciones, persistencia, manejo de identificadores duplicados y emisión de notificaciones.
+
+```mermaid
+classDiagram
+    class RepositorioMisiones {
+        <<interface>>
+        +guardar(Mision mision) void
+        +buscarPorId(String id) Optional~Mision~
+        +obtenerTodas() List~Mision~
+        +obtenerPorEstado(EstadoMision estado) List~Mision~
+        +existePorId(String id) boolean
+    }
+
+    class RepositorioMisionesMemoria {
+        -Map~String, Mision~ misiones
+        +guardar(Mision mision) void
+        +buscarPorId(String id) Optional~Mision~
+        +obtenerTodas() List~Mision~
+        +obtenerPorEstado(EstadoMision estado) List~Mision~
+        +existePorId(String id) boolean
+    }
+
+    class ValidadorMision {
+        +tieneBateriaSuficiente(DroneAcuatico drone) boolean
+        +validarPuntoPartida(String puntoPartida) void
+        +validarPuntoLlegada(String puntoLlegada) void
+        +validar(Mision mision) void
+    }
+
+    class NotificadorOperador {
+        <<interface>>
+        +notificarMisionRegistrada(Mision mision) void
+        +notificarError(String mensaje) void
+    }
+
+    class NotificadorOperadorConsola {
+        +notificarMisionRegistrada(Mision mision) void
+        +notificarError(String mensaje) void
+    }
+
+    class RegistradorMisiones {
+        -RepositorioMisiones repositorio
+        -ValidadorMision validador
+        -NotificadorOperador notificador
+        +RegistradorMisiones(RepositorioMisiones, ValidadorMision, NotificadorOperador)
+        +registrarMision(Mision mision) Mision
+        +consultarPorId(String id) Optional~Mision~
+        +consultarTodas() List~Mision~
+        +consultarPorEstado(EstadoMision estado) List~Mision~
+    }
+
+    RepositorioMisiones <|.. RepositorioMisionesMemoria : implementa
+    NotificadorOperador <|.. NotificadorOperadorConsola : implementa
+    RegistradorMisiones --> RepositorioMisiones : depende de abstracción (DIP)
+    RegistradorMisiones --> ValidadorMision : usa para validar reglas (SRP)
+    RegistradorMisiones --> NotificadorOperador : usa para alertar (SRP)
+```
+
+![Evidencia Reto 04](docs/img/reto4.png)
+
