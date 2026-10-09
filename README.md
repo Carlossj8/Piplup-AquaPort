@@ -246,6 +246,22 @@ Escenarios de prueba validados:
 * Restricción operativa que impide registrar misiones donde el punto de partida y llegada sean idénticos.
 * Trazabilidad de commits: Registro histórico con commits independientes para la especificación de pruebas (RED), la implementación funcional (GREEN) y la optimización estructural (REFACTOR).
 
+![Pruebas Unitarias ValidadorMision](docs/img/reto12.png)
+
+### Reto 13: Cobertura de Código con JaCoCo
+
+Se configuró el plugin de JaCoCo en el ciclo de construcción de Maven para medir, auditar y garantizar la cobertura de pruebas unitarias sobre la lógica de negocio del sistema.
+
+Métricas y resultados obtenidos:
+* Umbral mínimo requerido: 80% de cobertura de líneas.
+* Cobertura alcanzada en ValidadorMision: 100% en instrucciones, 100% en ramas de decisión (20 de 20 ramas) y 100% en líneas de código.
+* Cobertura global del paquete de dominio (com.eci.aquaport.dominio): 100% en instrucciones (433 de 433) y 100% en ramas (46 de 46).
+* Ausencia de ramas parciales o código muerto en las validaciones de negocio.
+* Generación automatizada del reporte HTML en target/site/jacoco/index.html en cada ejecución de la fase de pruebas.
+
+![Reporte de Cobertura JaCoCo](docs/img/reto13.png)
+
+
 
 
 
