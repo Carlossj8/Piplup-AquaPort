@@ -153,6 +153,26 @@ El diseño del panel de monitoreo fue evaluado frente a las heurísticas de usab
 | #8 Diseño minimalista | Cada tarjeta muestra solo ID, estado, batería y zona: lo necesario para decidir. |
 | #9 Mensajes de error claros | El motivo del bloqueo aparece junto al botón con dato y umbral ("batería insuficiente (18%). Mínimo requerido: 35%"). El fallo muestra un banner con el drone y la zona. |
 
+### Reto 09: Agilismo y Gestión en Jira
+
+Se estructuró la gestión ágil del desarrollo del sistema AquaPort MVP en Jira, estableciendo la jerarquía de trabajo orientada a valor mediante épica, feature, historias de usuario estructuradas y subtareas técnicas.
+
+Aspectos configurados en el tablero:
+* Feature contenedora: AP-5 Gestión de flota acuática.
+* Historias de usuario del MVP:
+  * AP-2: HU01 - Ver estado y disponibilidad de la flota de drones.
+  * AP-3: HU02 - Asignar drone acuático a una misión.
+  * AP-4: HU03 - Cancelar misión hídrica pendiente.
+* Formulación estándar de HU: Redacción en formato "Como [rol], quiero [funcionalidad], para [beneficio esperado]".
+* Criterios de aceptación en formato BDD (Dado/Cuando/Entonces): Definición de escenarios de éxito para asignación válida (batería >= 35% y estado disponible) y escenarios de fallo para restricciones de carga o drones no aptos.
+* Descomposición técnica en subtareas para la asignación de drones:
+  * AP-6: Implementación de servicio de asignación con validaciones de negocio.
+  * AP-7: Construcción del componente de interfaz gráfica para selección y visualización de elegibilidad.
+  * AP-8: Pruebas automatizadas unitarias y de integración sobre las condiciones de rechazo por umbral de batería.
+
+![Gestión del Backlog en Jira](docs/img/reto9.png)
+
+
 
 
 
