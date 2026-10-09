@@ -61,3 +61,18 @@ Aspectos implementados:
 
 ![Diagrama de Clases Reto 04](docs/img/reto4.png)
 
+### Reto 05: Diagrama de Contexto C4 (Nivel 1)
+
+Se elaboró el diagrama de contexto C4 correspondiente al nivel 1 para delimitar las fronteras del sistema AquaPort MVP, identificando a los usuarios externos y los flujos de información sin exponer detalles internos de implementación.
+
+Aspectos modelados:
+* Sistema central: AquaPort MVP como sistema autónomo de supervisión y gestión de drones acuáticos en el campus de la Escuela Colombiana de Ingeniería.
+* Actor Operador Hídrico: Encargado de registrar misiones, consultar la disponibilidad de drones y asignar unidades de forma manual.
+* Actor Solicitante: Investigador o miembro del campus que genera requerimientos de transporte de muestras de agua y sensores.
+* Actor Administrador ECI: Rol directivo que consulta métricas, reportes de desempeño y estado consolidado de la flota.
+* Delimitación del MVP: Ausencia de integraciones con sistemas externos en esta primera fase.
+* Relaciones etiquetadas: Definición explícita de los datos y solicitudes que viajan entre cada actor y el sistema central.
+
+![Diagrama de Contexto Reto 05](docs/img/reto5.png)
+
+
