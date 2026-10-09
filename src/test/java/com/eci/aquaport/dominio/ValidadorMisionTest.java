@@ -174,4 +174,29 @@ class ValidadorMisionTest {
         // ACT & ASSERT
         assertDoesNotThrow(() -> validador.validar(mision));
     }
+
+    @Test
+    @DisplayName("Misión cuyo drone retorna null lanza IllegalStateException")
+    void misionConDroneRetornadoNull_lanzaExcepcion() {
+        // ARRANGE
+        Mision misionMock = org.mockito.Mockito.mock(Mision.class);
+        org.mockito.Mockito.when(misionMock.getDrone()).thenReturn(null);
+
+        // ACT & ASSERT
+        IllegalStateException ex = assertThrows(IllegalStateException.class, () -> validador.validar(misionMock));
+        assertTrue(ex.getMessage().contains("no tiene un drone asignado"));
+    }
+
+    @Test
+    @DisplayName("Misión cuyo drone deja de estar disponible lanza IllegalStateException")
+    void misionConDroneNoDisponibleEnValidacion_lanzaExcepcion() {
+        // ARRANGE
+        Mision misionMock = org.mockito.Mockito.mock(Mision.class);
+        DroneAcuatico droneOcupado = new DroneAcuatico("AR-01", "Aqua-Ranger 100", 90, false, "Embalse Norte");
+        org.mockito.Mockito.when(misionMock.getDrone()).thenReturn(droneOcupado);
+
+        // ACT & ASSERT
+        IllegalStateException ex = assertThrows(IllegalStateException.class, () -> validador.validar(misionMock));
+        assertTrue(ex.getMessage().contains("no está disponible"));
+    }
 }

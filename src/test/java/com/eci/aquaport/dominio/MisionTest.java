@@ -170,4 +170,40 @@ class MisionTest {
 
         assertThrows(IllegalStateException.class, builder::build);
     }
+
+    @Test
+    @DisplayName("Verificar comportamiento de equals, hashCode y toString en Mision")
+    void testEqualsHashCodeToString() {
+        Mision m1 = new Mision.Builder()
+                .id("M-001")
+                .drone(droneDisponible)
+                .puntoPartida("Embalse Norte")
+                .puntoLlegada("Laboratorio Hídrico")
+                .tipoCarga(TipoCarga.MUESTRA_AGUA)
+                .build();
+
+        Mision m2 = new Mision.Builder()
+                .id("M-001")
+                .drone(droneDisponible)
+                .puntoPartida("Canal Central")
+                .puntoLlegada("Laguna Sur")
+                .tipoCarga(TipoCarga.SENSOR)
+                .build();
+
+        Mision m3 = new Mision.Builder()
+                .id("M-002")
+                .drone(droneDisponible)
+                .puntoPartida("Embalse Norte")
+                .puntoLlegada("Laboratorio Hídrico")
+                .tipoCarga(TipoCarga.MUESTRA_AGUA)
+                .build();
+
+        assertEquals(m1, m1);
+        assertEquals(m1, m2);
+        assertNotEquals(m1, m3);
+        assertNotEquals(m1, null);
+        assertNotEquals(m1, "otro");
+        assertEquals(m1.hashCode(), m2.hashCode());
+        assertTrue(m1.toString().contains("M-001"));
+    }
 }
