@@ -100,5 +100,20 @@ Se definieron los requisitos nucleares para AquaPort MVP especificando el actor,
 | RNF-01 | No Funcional | Should Have | Relevante para asegurar una experiencia de usuario ágil durante la consulta manual de la flota en el panel. |
 | RNF-03 | No Funcional | Could Have | Conveniente para asegurar la calidad técnica del código base previo a su escalamiento hacia los niveles autónomos. |
 
+### Reto 07: Plantilla DOSW (Especificación de Requerimiento)
+
+Se documentó detalladamente la especificación formal del requerimiento funcional AP-01 utilizando el estándar de la plantilla institucional DOSW, alojada en el repositorio en `docs/word/Plantilla_Requerimientos_DOSW_EjercicioTHC.docx`.
+
+Aspectos documentados en la plantilla:
+* Código y nombre: AP-01 Registrar misión de transporte de muestra.
+* Actor principal: Operador Hídrico.
+* Precondición: Existencia en el sistema de al menos un drone acuático disponible con nivel de batería mayor o igual al 35%.
+* Estructura de datos de entrada: Tipos de datos reales de dominio para drone asignado (DroneAcuatico), puntoPartida (String), puntoLlegada (String) y tipoCarga (Enum: MUESTRA_AGUA, SENSOR, PAQUETE_LIGERO), evitando elementos genéricos de interfaz gráfica.
+* Datos de salida: Identificador alfanumérico generado para la misión y confirmación de persistencia.
+* Flujo básico de eventos: Secuencia ordenada de 5 pasos desde la selección de parámetros, validación de disponibilidad, verificación de zonas hídricas hasta la confirmación al operador.
+* Flujos alternos: Manejo de escenarios excepcionales para batería crítica del drone (<35%), zonas fuera de cobertura y coincidencia de origen y destino.
+* Reglas de negocio: Exclusividad de misión activa por drone y validación obligatoria del umbral mínimo de carga.
+
+
 
 
