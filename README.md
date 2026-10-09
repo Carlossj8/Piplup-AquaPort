@@ -172,6 +172,23 @@ Aspectos configurados en el tablero:
 
 ![Gestión del Backlog en Jira](docs/img/reto9.png)
 
+### Reto 10: Diagramas de Casos de Uso (UML)
+
+Se modeló el comportamiento funcional del sistema AquaPort MVP centrado en el requerimiento nuclear AP-01, representando los límites del sistema, actores involucrados y las relaciones de dependencia mediante casos de uso.
+
+Aspectos modelados:
+* Límite del sistema: AquaPort MVP como contenedor de las funcionalidades operativas.
+* Actores:
+  * Operador Hídrico: Actor principal que interactúa con la gestión de flota y registro de misiones.
+  * Solicitante: Consulta el avance y estado de entrega de sus muestras.
+  * Administrador ECI: Consulta estadísticas generales y reportes de desempeño de la flota.
+* Casos de uso principales: Registrar misión de transporte, Consultar disponibilidad de flota, Cancelar misión pendiente, Consultar estado de misión y Generar reportes de operación.
+* Relación «include» (Obligatoria): Registrar misión incluye indispensablemente Validar disponibilidad y batería del drone, garantizando que ninguna misión se genere sin verificación previa.
+* Relación «extend» (Condicional): Registrar misión es extendido por Alertar batería en umbral crítico, disparado únicamente bajo la condición de que la batería del drone seleccionado se encuentre entre 35% y 40%.
+
+![Diagrama de Casos de Uso Reto 10](docs/img/reto10.png)
+
+
 
 
 
