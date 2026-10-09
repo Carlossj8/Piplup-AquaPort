@@ -229,6 +229,24 @@ Cumple Nielsen #1, #2, #4, #5, #8, #9. Usa auto layout y estilos reutilizables.
 
 ![Frame 03 - Sin Drones Disponibles](docs/img/reto8mock3.png)
 
+### Reto 12: Desarrollo Guiado por Pruebas (TDD) en ValidadorMision
+
+Se implementó el componente de validación de reglas de negocio ValidadorMision siguiendo el ciclo estricto de TDD (Red, Green, Refactor) con JUnit 5 y el patrón Arrange-Act-Assert (AAA).
+
+Fases del ciclo ejecutadas:
+* Fase Red (Pruebas primero): Se escribieron anticipadamente las pruebas unitarias en ValidadorMisionTest especificando los escenarios esperados antes de consolidar el código de producción.
+* Fase Green (Código mínimo): Se construyeron los métodos tieneBateriaSuficiente, validarPuntoPartida, validarPuntoLlegada y validar, permitiendo que la suite completa de 14 pruebas pasara exitosamente.
+* Fase Refactor (Optimización y diseño limpio): Se modularizó la lógica de verificación de zonas a través del método privado validarZona, centralizando mensajes descriptivos en español y eliminando duplicación de código sin alterar el comportamiento observable.
+
+Escenarios de prueba validados:
+* Asignación permitida para drones con batería mayor al 35% y en el umbral exacto del 35%.
+* Bloqueo inmediato para drones con batería crítica (< 35%) o en estado nulo.
+* Excepciones de tipo IllegalArgumentException ante puntos de partida o llegada nulos o en blanco.
+* Manejo de casos de borde (edge cases) para ubicaciones no pertenecientes a las zonas hídricas oficiales del campus.
+* Restricción operativa que impide registrar misiones donde el punto de partida y llegada sean idénticos.
+* Trazabilidad de commits: Registro histórico con commits independientes para la especificación de pruebas (RED), la implementación funcional (GREEN) y la optimización estructural (REFACTOR).
+
+
 
 
 
