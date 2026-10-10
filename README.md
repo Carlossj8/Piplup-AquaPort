@@ -261,6 +261,20 @@ Métricas y resultados obtenidos:
 
 ![Reporte de Cobertura JaCoCo](docs/img/reto13.png)
 
+### Reto 14: Análisis Estático con SonarQube
+
+Se realizó la auditoría de calidad de código mediante análisis estático con SonarQube, asegurando el cumplimiento del estándar de calidad definido para el nivel Piplup (MVP).
+
+Métricas y objetivos de calidad:
+* 0 Bugs identificados en la lógica de negocio y persistencia.
+* 0 Vulnerabilidades de seguridad.
+* Deuda técnica en 0 minutos para el alcance del MVP.
+* Resolución de Code Smells: Se refactorizó la clase NotificadorOperadorConsola eliminando el uso de flujos estándar directos (System.out y System.err - regla java:S106), sustituyéndolos por un Logger parametrizado con niveles semánticos INFO y SEVERE para evitar degradación de rendimiento y permitir redirección de trazas.
+* Sin supresión artificial: Ningún issue fue ocultado mediante anotaciones @SuppressWarnings, resolviendo cada hallazgo en su causa raíz.
+
+![Dashboard de SonarQube](docs/img/reto14.png)
+
+
 
 
 
