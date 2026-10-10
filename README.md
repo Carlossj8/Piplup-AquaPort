@@ -353,6 +353,30 @@ Se auditó la arquitectura orientada a la versión 2.0 garantizando el cumplimie
    * Dónde y cómo se cumple: Los servicios de alto nivel dependen de abstracciones (EstrategiaSeleccion, ObservadorMision, RepositorioMisiones) y no de implementaciones concretas, inyectadas directamente mediante constructor.
    * Importancia en AquaPort: Facilita el cambio dinámico de infraestructura (almacenamiento en base de datos vs. memoria) y desacopla la lógica de negocio de los detalles técnicos.
 
+### Reto 05: Diagrama de Contexto C4 (Nivel 1 - Versión 2.0)
+
+Se actualizó el diagrama de contexto C4 incorporando la evolución del sistema hacia la autonomía, integrando nuevos actores y conectando por primera vez con sistemas externos de soporte ambiental y control institucional.
+
+Evolución frente al MVP (Nivel 1 Piplup):
+* Elementos que se mantuvieron: El sistema central AquaPort como núcleo gestor y los actores Operador Hídrico, Solicitante y Administrador ECI.
+* Elementos que crecieron:
+  * Nuevo Actor: Técnico de Mantenimiento, responsable de atender fallas técnicas e inspeccionar unidades fuera de servicio.
+  * Nuevo Sistema Externo: API de Condiciones Hídricas, proveedora de telemetría sobre nivel de agitación, profundidad y turbidez de los cuerpos de agua.
+  * Nuevo Sistema Externo: Centro de Control ECI, entidad institucional para registro y autorización de navegación hídrica en canales del campus.
+  * Nuevo Sistema Externo: Sistema de Alertas, plataforma de mensajería para notificación de incidencias críticas en tiempo real.
+
+Flujos e intercambios de datos etiquetados:
+* AquaPort v2 -> API Condiciones Hídricas: Consulta de parámetros ambientales y estado de oleaje.
+* API Condiciones Hídricas -> AquaPort v2: Retorno de datos de agitación y profundidad por zona.
+* AquaPort v2 -> Centro de Control ECI: Solicitud de autorización de ruta y registro de misión.
+* Centro de Control ECI -> AquaPort v2: Autorización de zarpe y directrices de navegación.
+* AquaPort v2 -> Sistema de Alertas: Despacho automático de evento de fallo técnico.
+* Sistema de Alertas -> Técnico de Mantenimiento: Notificación de drone averiado y ubicación de rescate.
+* Técnico de Mantenimiento -> AquaPort v2: Actualización de estado del drone a mantenimiento o reparado.
+
+![Diagrama de Contexto C4 v2](docs/img/reto5-pr.png)
+
+
 
 
 
