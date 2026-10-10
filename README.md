@@ -322,6 +322,38 @@ Patrones implementados de forma coordinada:
 
 ![Patrones de Diseno Prinplup](docs/img/reto3-pr.png)
 
+### Reto 04: Auditoría y Aplicación Integral de Principios SOLID
+
+Se auditó la arquitectura orientada a la versión 2.0 garantizando el cumplimiento de los cinco principios SOLID sobre las nuevas clases, interfaces y jerarquías de dominio y aplicación.
+
+#### Análisis por principio
+
+1. Principio de Responsabilidad Única (SRP):
+   * Clases involucradas: AsignadorAutomatico, MayorBateriaStrategy, FabricaDrones y CentroControlObserver.
+   * Dónde y cómo se cumple: AsignadorAutomatico únicamente orquesta el flujo de asignación y despacho de eventos; los algoritmos de ordenamiento residen en sus estrategias correspondientes; la instanciación de unidades está aislada en FabricaDrones; y la presentación o logging de alertas compete en exclusiva a cada observador.
+   * Importancia en AquaPort: Evita clases utilitarias o monolíticas propensas a cambios ante modificaciones en el algoritmo de cálculo o en los canales de alerta.
+
+2. Principio de Abierto/Cerrado (OCP):
+   * Clases involucradas: AsignadorAutomatico, EstrategiaSeleccion, FabricaDrones.
+   * Dónde y cómo se cumple: AsignadorAutomatico está cerrado a modificaciones pero abierto a extensiones; la incorporación de nuevas estrategias (por ejemplo, basadas en proximidad física o consumo energético) no requiere alterar una sola línea del orquestador.
+   * Importancia en AquaPort: Permite escalar la lógica de decisión de la flota sin riesgo de regresión en las operaciones existentes.
+
+3. Principio de Sustitución de Liskov (LSP):
+   * Clases involucradas: DroneAcuatico y sus especializaciones (Superficial, Semisumergido, Buceador).
+   * Dónde y cómo se cumple: Cualquier unidad creada por la factoría cumple la totalidad de las invariantes y contratos de DroneAcuatico; ningún tipo especializado altera el comportamiento base, no introduce excepciones inesperadas y puede ser procesado uniformemente por repositorios y validadores.
+   * Importancia en AquaPort: Asegura interoperabilidad en toda la flota sin necesidad de verificar el tipo concreto durante el despacho.
+
+4. Principio de Segregación de Interfaces (ISP):
+   * Clases involucradas: EstrategiaSeleccion, ObservadorMision, RepositorioMisiones.
+   * Dónde y cómo se cumple: Se diseñaron interfaces cohesivas de propósito específico. EstrategiaSeleccion expone un único método de selección; ObservadorMision solo declara métodos de escucha de eventos; ninguna clase se ve obligada a depender de métodos que no consume.
+   * Importancia en AquaPort: Mantiene contratos limpios y facilita la creación de dobles de prueba (mocks y stubs) sin sobrecarga de implementación.
+
+5. Principio de Inversión de Dependencias (DIP):
+   * Clases involucradas: AsignadorAutomatico y RegistradorMisiones.
+   * Dónde y cómo se cumple: Los servicios de alto nivel dependen de abstracciones (EstrategiaSeleccion, ObservadorMision, RepositorioMisiones) y no de implementaciones concretas, inyectadas directamente mediante constructor.
+   * Importancia en AquaPort: Facilita el cambio dinámico de infraestructura (almacenamiento en base de datos vs. memoria) y desacopla la lógica de negocio de los detalles técnicos.
+
+
 
 
 
