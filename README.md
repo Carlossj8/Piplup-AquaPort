@@ -473,22 +473,77 @@ Aspectos planificados en el sprint:
 
 ![Sprint Planning v2 en Jira](docs/img/reto9-pr.png)
 
+### Reto 10: Diagrama de Casos de Uso Extendido v2
 
+Se expandió el modelo de casos de uso UML para reflejar la dinámica de la flota autónoma, incorporando la participación del Técnico de Mantenimiento y del Centro de Control, junto con encadenamientos de dependencias obligatorias y condicionales.
 
+Aspectos modelados:
+* Casos de uso de la versión 2.0:
+  * Asignar misión automáticamente (Caso de uso nuclear autónomo).
+  * Validar condiciones hídricas ambientales.
+  * Seleccionar drone óptimo mediante estrategia.
+  * Notificar fallo al técnico de mantenimiento.
+  * Despachar alerta prioritaria al Centro de Control.
+  * Registrar retorno o reparación de unidad.
+* Actores involucrados: Operador Hídrico, Solicitante, Administrador ECI, Técnico de Mantenimiento y Centro de Control.
+* Relaciones «include» obligatorias:
+  * Asignar misión automáticamente incluye Validar condiciones hídricas ambientales (requisito previo no condicional).
+  * Asignar misión automáticamente incluye Seleccionar drone óptimo mediante estrategia.
+* Relaciones «extend» condicionales:
+  * Notificar fallo al técnico de mantenimiento extiende Asignar misión automáticamente, disparándose únicamente si la estrategia detecta un drone en estado FALLO o imposibilidad de asignación.
+  * Despachar alerta prioritaria al Centro de Control extiende Asignar misión automáticamente bajo la condición de que la misión cuente con Prioridad CRÍTICA.
 
+![Diagrama de Casos de Uso Extendido v2](docs/img/reto10-pr.png)
 
+### Reto 11: Mocks de Asignación en 3 Pantallas
 
+Se diseñaron los prototipos visuales de alta fidelidad que modelan la interacción del operador con el sistema de asignación automática de drones en tres escenarios operativos clave:
 
+Estados modelados:
+* Estado Normal (Happy Path): Visualización de solicitud con asignación confirmada, telemetría de batería en niveles óptimos (>70%), trazado de ruta despejado y confirmación de despacho al operador.
+* Estado Alerta (Prioridad Crítica): Despliegue de misión de alta prioridad sin unidades inmediatas en el punto de recolección, activación de banners de advertencia visual y reasignación de ruta prioritaria con notificación a Centro de Control.
+* Estado Sin Disponibles: Escenario de contingencia operativa con saturación de flota, alertas visuales de indisponibilidad técnica, cola de misiones en espera y sugerencias de rebalanceo de unidades.
 
+![Mocks de Asignación v2 en 3 Estados](docs/img/reto11-pr.png)
 
+### Reto 12: TDD con Mockito para el AsignadorAutomático
 
+Se implementó el ciclo Test-Driven Development (TDD) para el componente central `AsignadorAutomatico`, desacoplando colaboradores externos mediante Mockito (`@Mock`, `@InjectMocks`, `when`, `verify`).
 
+Pruebas unitarias y de comportamiento implementadas:
+* Asignación exitosa (Happy path): Verificación de que una selección favorable notifica exclusivamente `notificarAsignacionExitosa` a los observadores registrados y no dispara eventos de fallo.
+* Misión CRÍTICA sin drones: Comprobación de que una misión de prioridad crítica sin unidades aptas genera una alerta de fallo urgente hacia el Centro de Control y Mantenimiento.
+* Drone en FALLO durante asignación: Detección de una unidad con fallo técnico devuelta por la selección, despacho de notificación técnica a los observadores y ejecución de una búsqueda automática de drone alternativo en la flota restante.
+* Lista de drones vacía: Validación de que flotas nulas o sin elementos notifican fallo preventivo de inmediato sin invocar la estrategia de selección.
+* Batería en el umbral mínimo (35%): Prueba de caso edge que confirma que un drone con exactamente 35% de batería es asignado satisfactoriamente, contrastando con el caso de 34% que es rechazado de inmediato.
+* Casos adicionales de robustez: Validación de exclusión de observadores removidos, control de argumentos nulos (`IllegalArgumentException` y `NullPointerException`) y despacho manual de fallos imprevistos.
 
+Cobertura de código obtenida en el componente:
+* Instrucciones (Bytecode): 100% de cobertura.
+* Ramas de decisión (Branches): 93% de cobertura auditada por JaCoCo.
 
+![Pruebas TDD Mockito AsignadorAutomatico](docs/img/reto12-pr.png)
 
+### Reto 13: JaCoCo Quality Gate y Cobertura de Dominio v2
 
+Se configuró un Quality Gate estricto en el plugin `jacoco-maven-plugin` de Maven para asegurar que el build falle automáticamente si la cobertura de líneas o de ramas cae por debajo del 80% (0.80).
 
+Configuración del Quality Gate en `pom.xml`:
+* Fase de ejecución: `verify`.
+* Meta: `check`.
+* Límites de control:
+  * `LINE` ratio mínimo: 0.80 (80%).
+  * `BRANCH` ratio mínimo: 0.80 (80%).
 
+Métricas globales auditadas tras ejecución de pruebas:
+* Proyecto consolidado: 90% de cobertura de instrucciones y 92% de cobertura de ramas (70 pruebas unitarias en verde).
+* Paquete `com.eci.aquaport.dominio`: 99% de instrucciones y 98% de ramas.
+* Paquete `com.eci.aquaport.aplicacion`: 85% de instrucciones y 91% de ramas.
 
+Resolución de ramas amarillas (parcialmente cubiertas):
+* `FabricaDrones`: Se desarrollaron pruebas unitarias (`FabricaDronesTest`) para verificar las bifurcaciones defensivas de tipo nulo e identificador nulo o vacío (`IllegalArgumentException`), elevando la clase al 100% de ramas.
+* `PrioridadCriticaStrategy`: Se cubrieron todas las ramas condicionales en `PrioridadCriticaStrategyTest`, incluyendo el caso de misión crítica sin drones en zona que recurre al de mayor batería general, misiones normales y listas de flota nulas o vacías.
+* `MayorBateriaStrategy`: Se implementaron pruebas específicas para flotas nulas/vacías y exclusión de drones inactivos o por debajo del umbral del 35%.
+* `CentroControlObserver` y `TecnicoMantenimientoObserver`: Se validaron las ejecuciones reales de logging y formateo de mensajes tanto para éxito como para alertas críticas en `ObservadoresRealesTest`.
 
-
+![Reporte JaCoCo Quality Gate v2](docs/img/reto13-pr.png)

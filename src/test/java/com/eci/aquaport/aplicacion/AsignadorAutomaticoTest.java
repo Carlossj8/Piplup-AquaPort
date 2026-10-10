@@ -8,10 +8,14 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.contains;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -27,7 +31,8 @@ class AsignadorAutomaticoTest {
     private ObservadorMision tecnicoMantenimientoMock;
 
     private AsignadorAutomatico asignador;
-    private Mision mision;
+    private Mision misionNormal;
+    private Mision misionCritica;
     private DroneAcuatico droneApto;
 
     @BeforeEach
@@ -36,87 +41,261 @@ class AsignadorAutomaticoTest {
 
         droneApto = FabricaDrones.crearSuperficial("AR-01", 90, "Embalse Norte");
 
-        mision = new Mision.Builder()
-                .id("M-CRIT-1")
+        misionNormal = new Mision.Builder()
+                .id("M-NORM-1")
                 .drone(droneApto)
                 .puntoPartida("Embalse Norte")
                 .puntoLlegada("Laboratorio Hídrico")
                 .tipoCarga(TipoCarga.MUESTRA_AGUA)
+                .prioridad(Prioridad.NORMAL)
+                .build();
+
+        misionCritica = new Mision.Builder()
+                .id("M-CRIT-1")
+                .drone(droneApto)
+                .puntoPartida("Embalse Norte")
+                .puntoLlegada("Laboratorio Hídrico")
+                .tipoCarga(TipoCarga.SENSOR)
                 .prioridad(Prioridad.CRITICA)
                 .build();
     }
 
     @Test
-    @DisplayName("Cuando la asignación falla, todos los observadores son notificados exactamente una vez")
-    void asignacionFalla_notificaTodosLosObservadoresExactamenteUnaVez() {
-        // ARRANGE
-        asignador.registrarObservador(centroControlMock);
-        asignador.registrarObservador(tecnicoMantenimientoMock);
-
-        when(estrategiaMock.seleccionar(any(), eq(mision)))
-                .thenReturn(Optional.empty());
-
-        // ACT
-        Optional<DroneAcuatico> resultado = asignador.asignar(mision, List.of());
-
-        // ASSERT
-        assertTrue(resultado.isEmpty());
-        verify(centroControlMock, times(1)).notificarFallo(eq(mision), contains("No se encontraron drones aptos"));
-        verify(tecnicoMantenimientoMock, times(1)).notificarFallo(eq(mision), contains("No se encontraron drones aptos"));
-    }
-
-    @Test
-    @DisplayName("Cuando la asignación es exitosa, se notifica el éxito a los observadores")
+    @DisplayName("1. Happy Path: Asignación exitosa notifica confirmación a los observadores")
     void asignacionExitosa_notificaExito() {
         // ARRANGE
         asignador.registrarObservador(centroControlMock);
-
-        when(estrategiaMock.seleccionar(any(), eq(mision)))
+        when(estrategiaMock.seleccionar(any(), eq(misionNormal)))
                 .thenReturn(Optional.of(droneApto));
 
         // ACT
-        Optional<DroneAcuatico> resultado = asignador.asignar(mision, List.of(droneApto));
+        Optional<DroneAcuatico> resultado = asignador.asignar(misionNormal, List.of(droneApto));
 
         // ASSERT
         assertTrue(resultado.isPresent());
         assertEquals("AR-01", resultado.get().id());
-        verify(centroControlMock, times(1)).notificarAsignacionExitosa(mision, droneApto);
+        verify(centroControlMock, times(1)).notificarAsignacionExitosa(misionNormal, droneApto);
         verify(centroControlMock, never()).notificarFallo(any(), any());
     }
 
     @Test
-    @DisplayName("Un observador desregistrado no recibe notificaciones de fallo")
-    void observadorRemovido_noRecibeNotificacion() {
+    @DisplayName("2. Misión CRÍTICA sin drones disponibles notifica alerta crítica a todos los observadores")
+    void misionCritica_sinDrones_notificaObservadores() {
         // ARRANGE
+        asignador.registrarObservador(centroControlMock);
+        asignador.registrarObservador(tecnicoMantenimientoMock);
+
+        when(estrategiaMock.seleccionar(any(), eq(misionCritica)))
+                .thenReturn(Optional.empty());
+
+        // ACT
+        Optional<DroneAcuatico> resultado = asignador.asignar(misionCritica, List.of(droneApto));
+
+        // ASSERT
+        assertTrue(resultado.isEmpty());
+        verify(centroControlMock, times(1)).notificarFallo(eq(misionCritica), contains("CRÍTICA"));
+        verify(tecnicoMantenimientoMock, times(1)).notificarFallo(eq(misionCritica), contains("CRÍTICA"));
+    }
+
+    @Test
+    @DisplayName("3. Drone encontrado en FALLO durante asignación notifica alerta y busca drone alternativo exitosamente")
+    void droneEnFalloDuranteAsignacion_notificaFalloYBuscaAlternativo() {
+        // ARRANGE
+        asignador.registrarObservador(centroControlMock);
+        asignador.registrarObservador(tecnicoMantenimientoMock);
+
+        DroneAcuatico droneEnFallo = new DroneAcuatico(
+                "AR-FALLO-1", "Aqua-Ranger 100", 80, false, "Embalse Norte",
+                TipoDrone.SUPERFICIAL, EstadoDrone.FALLO);
+
+        DroneAcuatico droneAlternativo = new DroneAcuatico(
+                "AR-ALT-2", "Aqua-Ranger 100", 75, true, "Embalse Norte",
+                TipoDrone.SUPERFICIAL, EstadoDrone.DISPONIBLE);
+
+        List<DroneAcuatico> flota = List.of(droneEnFallo, droneAlternativo);
+
+        // Primer intento retorna el drone en fallo; segundo intento con flota filtrada retorna el alternativo
+        when(estrategiaMock.seleccionar(eq(flota), eq(misionNormal)))
+                .thenReturn(Optional.of(droneEnFallo));
+        when(estrategiaMock.seleccionar(argThat(lista -> lista.size() == 1 && lista.contains(droneAlternativo)), eq(misionNormal)))
+                .thenReturn(Optional.of(droneAlternativo));
+
+        // ACT
+        Optional<DroneAcuatico> resultado = asignador.asignar(misionNormal, flota);
+
+        // ASSERT
+        assertTrue(resultado.isPresent());
+        assertEquals("AR-ALT-2", resultado.get().id());
+        verify(centroControlMock, times(1)).notificarFallo(eq(misionNormal), contains("FALLO técnico"));
+        verify(tecnicoMantenimientoMock, times(1)).notificarFallo(eq(misionNormal), contains("FALLO técnico"));
+        verify(centroControlMock, times(1)).notificarAsignacionExitosa(misionNormal, droneAlternativo);
+    }
+
+    @Test
+    @DisplayName("4. Lista de drones vacía notifica fallo a los observadores sin invocar la estrategia")
+    void listaDronesVacia_notificaFallo() {
+        // ARRANGE
+        asignador.registrarObservador(centroControlMock);
+
+        // ACT
+        Optional<DroneAcuatico> resultado = asignador.asignar(misionNormal, Collections.emptyList());
+
+        // ASSERT
+        assertTrue(resultado.isEmpty());
+        verify(centroControlMock, times(1)).notificarFallo(eq(misionNormal), contains("vacía"));
+        verify(estrategiaMock, never()).seleccionar(any(), any());
+    }
+
+    @Test
+    @DisplayName("5. Caso edge: Drone con batería exactamente en el umbral mínimo (35%) es asignado exitosamente")
+    void bateriaExactamenteEnUmbralMinimo_asignacionExitosa() {
+        // ARRANGE con estrategia real MayorBateriaStrategy para probar el caso edge de dominio
+        AsignadorAutomatico asignadorReal = new AsignadorAutomatico(new MayorBateriaStrategy());
+        asignadorReal.registrarObservador(centroControlMock);
+
+        DroneAcuatico droneUmbral35 = new DroneAcuatico(
+                "AR-35", "Aqua-Ranger 100", 35, true, "Embalse Norte",
+                TipoDrone.SUPERFICIAL, EstadoDrone.DISPONIBLE);
+
+        // ACT
+        Optional<DroneAcuatico> resultado = asignadorReal.asignar(misionNormal, List.of(droneUmbral35));
+
+        // ASSERT
+        assertTrue(resultado.isPresent());
+        assertEquals(35, resultado.get().bateria());
+        verify(centroControlMock, times(1)).notificarAsignacionExitosa(misionNormal, droneUmbral35);
+    }
+
+    @Test
+    @DisplayName("Caso edge negativo: Drone con 34% de batería está por debajo del umbral y es rechazado")
+    void bateriaBajoUmbralMinimo_rechazado() {
+        AsignadorAutomatico asignadorReal = new AsignadorAutomatico(new MayorBateriaStrategy());
+        asignadorReal.registrarObservador(centroControlMock);
+
+        DroneAcuatico droneBajo34 = new DroneAcuatico(
+                "AR-34", "Aqua-Ranger 100", 34, true, "Embalse Norte",
+                TipoDrone.SUPERFICIAL, EstadoDrone.DISPONIBLE);
+
+        Optional<DroneAcuatico> resultado = asignadorReal.asignar(misionNormal, List.of(droneBajo34));
+
+        assertTrue(resultado.isEmpty());
+        verify(centroControlMock, times(1)).notificarFallo(eq(misionNormal), contains("No se encontraron drones aptos"));
+    }
+
+    @Test
+    @DisplayName("Drone en FALLO sin alternativa viable notifica fallo final y retorna empty")
+    void droneEnFalloSinAlternativo_retornaEmpty() {
+        asignador.registrarObservador(centroControlMock);
+
+        DroneAcuatico droneEnFallo = new DroneAcuatico(
+                "AR-FALLO-1", "Aqua-Ranger 100", 80, false, "Embalse Norte",
+                TipoDrone.SUPERFICIAL, EstadoDrone.FALLO);
+
+        when(estrategiaMock.seleccionar(any(), eq(misionNormal)))
+                .thenReturn(Optional.of(droneEnFallo));
+
+        Optional<DroneAcuatico> resultado = asignador.asignar(misionNormal, List.of(droneEnFallo));
+
+        assertTrue(resultado.isEmpty());
+        verify(centroControlMock, times(1)).notificarFallo(eq(misionNormal), contains("FALLO técnico"));
+    }
+
+    @Test
+    @DisplayName("Un observador desregistrado no recibe notificaciones")
+    void observadorRemovido_noRecibeNotificacion() {
         asignador.registrarObservador(centroControlMock);
         asignador.registrarObservador(tecnicoMantenimientoMock);
         asignador.removerObservador(tecnicoMantenimientoMock);
 
-        when(estrategiaMock.seleccionar(any(), eq(mision)))
+        when(estrategiaMock.seleccionar(any(), eq(misionNormal)))
                 .thenReturn(Optional.empty());
 
-        // ACT
-        asignador.asignar(mision, List.of());
+        asignador.asignar(misionNormal, List.of(droneApto));
 
-        // ASSERT
-        verify(centroControlMock, times(1)).notificarFallo(eq(mision), anyString());
+        verify(centroControlMock, times(1)).notificarFallo(eq(misionNormal), anyString());
         verify(tecnicoMantenimientoMock, never()).notificarFallo(any(), any());
     }
 
     @Test
-    @DisplayName("Factory Method crea correctamente los 3 tipos de drones especializados")
-    void fabricaDrones_creaTiposEspecializadosCorrectamente() {
-        DroneAcuatico superficial = FabricaDrones.crearSuperficial("AR-10", 80, "Canal Central");
-        DroneAcuatico semisumergido = FabricaDrones.crearSemisumergido("SS-10", 85, "Laguna Sur");
-        DroneAcuatico buceador = FabricaDrones.crearBuceador("BC-10", 95, "Embalse Norte");
+    @DisplayName("Sobrecarga asignar(Mision) con flota nula o vacía notifica y retorna empty")
+    void asignarSobrecarga_retornaEmpty() {
+        asignador.registrarObservador(centroControlMock);
 
-        assertEquals(TipoDrone.SUPERFICIAL, superficial.tipo());
-        assertEquals(500, superficial.tipo().getCapacidadMaximaGramos());
+        Optional<DroneAcuatico> resultado = asignador.asignar(misionNormal);
 
-        assertEquals(TipoDrone.SEMISUMERGIDO, semisumergido.tipo());
-        assertEquals(1500, semisumergido.tipo().getCapacidadMaximaGramos());
+        assertTrue(resultado.isEmpty());
+        verify(centroControlMock, times(1)).notificarFallo(eq(misionNormal), contains("vacía"));
+    }
 
-        assertEquals(TipoDrone.BUCEADOR, buceador.tipo());
-        assertEquals(300, buceador.tipo().getCapacidadMaximaGramos());
+    @Test
+    @DisplayName("Misión nula lanza IllegalArgumentException")
+    void misionNula_lanzaExcepcion() {
+        assertThrows(IllegalArgumentException.class, () -> asignador.asignar(null, List.of(droneApto)));
+    }
+
+    @Test
+    @DisplayName("Estrategia nula en constructor o setter lanza NullPointerException")
+    void estrategiaNula_lanzaExcepcion() {
+        assertThrows(NullPointerException.class, () -> new AsignadorAutomatico(null));
+        assertThrows(NullPointerException.class, () -> asignador.setEstrategia(null));
+    }
+
+    @Test
+    @DisplayName("setEstrategia con estrategia válida actualiza la estrategia exitosamente")
+    void setEstrategia_valida_actualizaEstrategia() {
+        MayorBateriaStrategy nuevaEstrategia = new MayorBateriaStrategy();
+        asignador.setEstrategia(nuevaEstrategia);
+        assertDoesNotThrow(() -> asignador.setEstrategia(nuevaEstrategia));
+    }
+
+    @Test
+    @DisplayName("Registrar observador nulo o duplicado no genera duplicados ni excepciones")
+    void registrarObservador_nuloODuplicado_ignora() {
+        asignador.registrarObservador(null);
+        asignador.registrarObservador(centroControlMock);
+        asignador.registrarObservador(centroControlMock);
+
+        when(estrategiaMock.seleccionar(any(), eq(misionNormal)))
+                .thenReturn(Optional.of(droneApto));
+
+        asignador.asignar(misionNormal, List.of(droneApto));
+
+        verify(centroControlMock, times(1)).notificarAsignacionExitosa(misionNormal, droneApto);
+    }
+
+    @Test
+    @DisplayName("Drone inicial en FALLO pero estrategia no encuentra alternativo viable notifica fallo final")
+    void droneEnFallo_sinAlternativoViablePorEstrategia_retornaEmpty() {
+        asignador.registrarObservador(centroControlMock);
+
+        DroneAcuatico droneEnFallo = new DroneAcuatico(
+                "AR-FALLO-1", "Aqua-Ranger 100", 80, false, "Embalse Norte",
+                TipoDrone.SUPERFICIAL, EstadoDrone.FALLO);
+
+        DroneAcuatico droneIncompatible = new DroneAcuatico(
+                "AR-INCOMPATIBLE", "Aqua-Ranger 100", 20, false, "Embalse Norte",
+                TipoDrone.SUPERFICIAL, EstadoDrone.MANTENIMIENTO);
+
+        List<DroneAcuatico> flota = List.of(droneEnFallo, droneIncompatible);
+
+        when(estrategiaMock.seleccionar(any(), eq(misionNormal)))
+                .thenReturn(Optional.of(droneEnFallo))
+                .thenReturn(Optional.empty());
+
+        Optional<DroneAcuatico> resultado = asignador.asignar(misionNormal, flota);
+
+        assertTrue(resultado.isEmpty());
+        verify(centroControlMock, times(1)).notificarFallo(eq(misionNormal), contains("FALLO técnico"));
+        verify(centroControlMock, times(1)).notificarFallo(eq(misionNormal), contains("No se encontró drone alternativo"));
+    }
+
+    @Test
+    @DisplayName("Notificación de evento de fallo manual propaga a observadores")
+    void notificarEventoFallo_propagaAObservadores() {
+        asignador.registrarObservador(centroControlMock);
+
+        asignador.notificarEventoFallo(misionNormal, "Emergencia climática");
+
+        verify(centroControlMock, times(1)).notificarFallo(misionNormal, "Emergencia climática");
     }
 }

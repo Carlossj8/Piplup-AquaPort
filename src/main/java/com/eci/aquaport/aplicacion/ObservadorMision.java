@@ -11,5 +11,9 @@ public interface ObservadorMision {
 
     void notificarFallo(Mision mision, String motivo);
 
+    default void notificarFalloAsignacion(Mision mision) {
+        notificarFallo(mision, "Fallo en la asignación de la misión: " + (mision != null ? mision.getId() : "N/A"));
+    }
+
     void notificarAsignacionExitosa(Mision mision, DroneAcuatico drone);
 }
