@@ -409,6 +409,26 @@ Se definieron los requisitos para las capacidades autónomas y de monitoreo ambi
 | RNF-06 | No Funcional | Should Have | Necesario para aislar el sistema central de caídas temporales de la API ambiental externa. |
 | RNF-07 | No Funcional | Could Have | Deseable para preservar la salud estructural del código previa a la versión multi-embalse. |
 
+### Reto 07: Plantilla DOSW para Asignación Automática (AP-07)
+
+Se documentó detalladamente la especificación formal del requerimiento funcional AP-07 utilizando el estándar de la plantilla institucional DOSW, alojada en el repositorio en `docs/word/detalleRequerimientoPrinplup.docx`.
+
+Aspectos documentados en la plantilla:
+* Código y nombre: AP-07 Asignar automáticamente drone a misión hídrica.
+* Actor: Sistema (proceso autónomo supervisado por el Operador Hídrico).
+* Estructura jerárquica de datos de entrada: Tipos de datos reales y sub-atributos anidados:
+  * carga.peso: Integer (1 a 1500 gramos).
+  * carga.tipo: Enum (MUESTRA_AGUA, SENSOR, PAQUETE_LIGERO, EQUIPO_MEDICION).
+  * carga.prioridad: Enum (CRITICA, ALTA, NORMAL, BAJA).
+  * zonaDestino: Enum (EMBALSE_NORTE, CANAL_CENTRAL, LAGUNA_SUR, RIBERA_ESTE, LAB_HIDRICO).
+* Datos calculados de salida:
+  * droneAsignado.id: String (formato AR-XX).
+  * droneAsignado.tipo: String (SUPERFICIAL, SEMISUMERGIDO, BUCEADOR).
+* Flujo básico de 7 pasos: Recepción de solicitud -> consulta de condiciones hídricas -> filtrado de drones aptos por zona -> aplicación de estrategia activa -> validaciones multinivel (batería, capacidad y compatibilidad) -> asignación formal -> despacho de notificaciones a observadores.
+* Flujos alternos: Manejo de escenarios sin drones disponibles, condiciones ambientales adversas en el cuerpo hídrico y exceso de capacidad de carga respecto al tipo de drone.
+* Reglas de negocio: Umbral estricto de batería mínima del 35% y restricción de peso máximo de 300g para unidades de tipo Buceador.
+
+
 
 
 
