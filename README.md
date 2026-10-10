@@ -310,6 +310,19 @@ Estructura de ramas y ciclo de integración:
 
 ![Diagrama GitFlow v2](docs/img/reto2-pr.png)
 
+### Reto 03: Patrones de Diseño (Strategy, Observer y Factory Method)
+
+Se implementó la arquitectura de asignación autónoma de la versión 2.0 integrando tres patrones de diseño de software para garantizar extensibilidad, bajo acoplamiento y reactividad ante fallos.
+
+Patrones implementados de forma coordinada:
+* Factory Method (FabricaDrones): Centraliza la instanciación de los tres tipos especializados de drones (Superficial, Semisumergido y Buceador), asignando automáticamente modelos, zonas y capacidades de carga según la especialidad.
+* Strategy (EstrategiaSeleccion): Desacopla el algoritmo de elección del drone óptimo. Se implementaron las estrategias MayorBateriaStrategy y PrioridadCriticaStrategy, ejecutando selección polimórfica en AsignadorAutomatico sin incurrir en violaciones de diseño con condicionales instanceof.
+* Observer (ObservadorMision): Establece el canal de notificación desacoplado para eventos operativos. Los observadores CentroControlObserver y TecnicoMantenimientoObserver son alertados en tiempo real ante asignaciones confirmadas o incidencias.
+* Verificación con Mockito: Pruebas unitarias en AsignadorAutomaticoTest comprobando mediante dobles de prueba y verify que ante eventos de fallo todos los observadores registrados son notificados exactamente una vez.
+
+![Patrones de Diseno Prinplup](docs/img/reto3-pr.png)
+
+
 
 
 
