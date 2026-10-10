@@ -453,6 +453,27 @@ Aplicación de Leyes UX:
 ![Sistema de Diseno y Flujo UX v2](docs/img/3.png)
 ![Sistema de Diseno y Flujo UX v2](docs/img/4.png)
 
+### Reto 09: Planificación del Sprint y Gestión Ágil v2 en Jira
+
+Se planificó y activó el sprint de la versión 2.0 en Jira alineando la capacidad del equipo con los objetivos de valor, aplicando estimación en puntos de historia y formalizando los criterios de aceptación y calidad.
+
+Aspectos planificados en el sprint:
+* Objetivo del Sprint (Sprint Goal): Completar el asignador automático con Strategy y las alertas con Observer.
+* Estimación por Story Points (Secuencia Fibonacci):
+  * HU-04 (Asignación automática de drones mediante Strategy): 5 Story Points.
+  * HU-05 (Despacho de alertas a Centro de Control y Mantenimiento con Observer): 3 Story Points.
+  * HU-06 (Consulta y validación de condiciones hídricas ambientales): 3 Story Points.
+  * HU-07 (Gestión y reincorporación de flota por Técnico de Mantenimiento): 2 Story Points.
+* Definition of Done (DoD) estricto de la versión 2.0:
+  * El código compila limpiamente sin advertencias del compilador.
+  * La totalidad de las pruebas unitarias y de integración pasan con éxito en JUnit 5.
+  * Cobertura mínima de líneas auditada por JaCoCo mayor o igual al 80% sobre las funcionalidades del sprint.
+  * Pull Request con revisión y aprobación de al menos otro integrante del equipo.
+  * Actualización sincronizada de los diagramas de arquitectura C4 y la plantilla de requerimientos DOSW.
+
+![Sprint Planning v2 en Jira](docs/img/reto9-pr.png)
+
+
 
 
 
