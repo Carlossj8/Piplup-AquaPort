@@ -293,6 +293,24 @@ Aspectos implementados:
 
 ![Streams Avanzados Prinplup](docs/img/reto1-pr.png)
 
+### Reto 02: GitFlow Completo con Release y Hotfix (v2.0)
+
+Se documentó y estructuró la estrategia integral de ramificación bajo el modelo GitFlow para el ciclo de vida de la versión 2.0, garantizando la estabilidad de producción y el desarrollo paralelo de funcionalidades autónomas.
+
+Estructura de ramas y ciclo de integración:
+* Rama main: Aloja el código productivo estable, etiquetado formalmente con versiones semánticas (v1.0.0 y v2.0.0).
+* Rama develop: Rama de integración continua receptora de las funcionalidades aprobadas.
+* Ramas de características (features):
+  * feature/asignacion-automatica: Implementación de la estrategia de selección de drones.
+  * feature/alertas-centro-control: Notificación por observadores ante estados de fallo.
+  * feature/factory-drones: Factoría para instanciación de los 3 tipos de unidades especializadas.
+* Rama de estabilización (release/v2.0): Congelamiento de código para ajustes menores, preparación de changelog y pruebas finales previo al despliegue.
+* Rama de corrección urgente (hotfix/fix-bateria-critica): Ramificación directa desde main para solventar incidentes críticos en producción, reintegrándose tanto en main como en develop.
+* Etiquetado semántico: Generación del tag v2.0.0 en main al completar la fusión de la release.
+
+![Diagrama GitFlow v2](docs/img/reto2-pr.png)
+
+
 
 
 
