@@ -428,6 +428,32 @@ Aspectos documentados en la plantilla:
 * Flujos alternos: Manejo de escenarios sin drones disponibles, condiciones ambientales adversas en el cuerpo hídrico y exceso de capacidad de carga respecto al tipo de drone.
 * Reglas de negocio: Umbral estricto de batería mínima del 35% y restricción de peso máximo de 300g para unidades de tipo Buceador.
 
+### Reto 08: Sistema de Diseño v2 y Leyes UX Aplicadas
+
+Se extendió el sistema de diseño de AquaPort para la versión 2.0, modelando componentes con estados exhaustivos y aplicando leyes fundamentales de experiencia de usuario para optimizar la toma de decisiones del operador.
+
+Componentes del sistema de diseño:
+* Componente Tarjeta de Drone Acuático con sus 6 estados operativos:
+  * Disponible: Borde y chip verde (#34C77B) con indicador de zarpe habilitado.
+  * En Misión: Borde y chip azul (#4C9BFF) con ruta y tiempo estimado visible.
+  * Recargando: Borde y chip ámbar (#F5A524) con porcentaje de carga activa.
+  * Mantenimiento: Borde y chip gris (#8C9AA3) con acceso a bitácora de taller.
+  * Fallo: Borde y chip rojo (#FF5C61) con contenedor de alerta e indicador de rescate.
+  * Sumergido: Borde y chip azul oscuro (#1D4ED8) con telemetría de profundidad.
+* Componente Indicador de Batería con tres umbrales visuales: verde (>= 60%), ámbar (35% a 59%) y rojo (< 35% con bloqueo preventivo).
+* Componente Botón de Asignación con 5 estados: Default, Hover, Procesando (spinner), Éxito y Deshabilitado.
+
+Aplicación de Leyes UX:
+* Ley de Fitts: Ubicación prominente y tamaño optimizado para el botón de asignación y el comando de aborto de emergencia en la barra superior, reduciendo el tiempo de adquisición del objetivo interactivo.
+* Ley de Hick: Categorización de la flota de 15 drones en tres grupos especializados (Superficial, Semisumergido, Buceador) mediante pestañas de filtrado, reduciendo el número de alternativas inmediatas y el tiempo de reacción del operador.
+* Ley de Miller: Fragmentación de la información de cada drone en trozos (chunks) de 5 atributos críticos (Identificador, Tipo, Batería, Zona actual y Estado), evitando sobrecargar la memoria de trabajo del usuario.
+
+![Sistema de Diseno y Flujo UX v2](docs/img/1.png)
+![Sistema de Diseno y Flujo UX v2](docs/img/2.png)
+![Sistema de Diseno y Flujo UX v2](docs/img/3.png)
+![Sistema de Diseno y Flujo UX v2](docs/img/4.png)
+
+
 
 
 
