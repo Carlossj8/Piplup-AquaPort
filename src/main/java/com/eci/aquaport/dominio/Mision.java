@@ -10,6 +10,7 @@ public class Mision {
     private final String puntoLlegada;
     private final TipoCarga tipoCarga;
     private final EstadoMision estado;
+    private final Prioridad prioridad;
 
     private Mision(Builder builder) {
         this.id = builder.id;
@@ -18,6 +19,7 @@ public class Mision {
         this.puntoLlegada = builder.puntoLlegada;
         this.tipoCarga = builder.tipoCarga;
         this.estado = builder.estado;
+        this.prioridad = builder.prioridad;
     }
 
     public String getId() {
@@ -44,6 +46,10 @@ public class Mision {
         return estado;
     }
 
+    public Prioridad getPrioridad() {
+        return prioridad;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -66,6 +72,7 @@ public class Mision {
                 ", puntoLlegada='" + puntoLlegada + '\'' +
                 ", tipoCarga=" + tipoCarga +
                 ", estado=" + estado +
+                ", prioridad=" + prioridad +
                 '}';
     }
 
@@ -76,6 +83,7 @@ public class Mision {
         private String puntoLlegada;
         private TipoCarga tipoCarga;
         private EstadoMision estado = EstadoMision.PENDIENTE;
+        private Prioridad prioridad = Prioridad.NORMAL;
 
         public Builder id(String id) {
             this.id = id;
@@ -107,6 +115,11 @@ public class Mision {
             return this;
         }
 
+        public Builder prioridad(Prioridad prioridad) {
+            this.prioridad = prioridad;
+            return this;
+        }
+
         public Mision build() {
             if (id == null || id.trim().isEmpty()) {
                 throw new IllegalStateException("El identificador de la misión no puede ser nulo ni vacío.");
@@ -128,6 +141,9 @@ public class Mision {
             }
             if (estado == null) {
                 throw new IllegalStateException("El estado de la misión no puede ser nulo.");
+            }
+            if (prioridad == null) {
+                throw new IllegalStateException("La prioridad de la misión no puede ser nula.");
             }
             return new Mision(this);
         }

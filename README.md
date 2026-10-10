@@ -274,6 +274,26 @@ Métricas y objetivos de calidad:
 
 ![Dashboard de SonarQube](docs/img/reto14.png)
 
+## Nivel 2: Prinplup (Flota Autónoma y Alertas)
+
+En esta segunda etapa del sistema se escala la flota a 15 drones distribuidos en tres tipos especializados (Superficial, Semisumergido y Buceador), incorporando asignación autónoma por condiciones hídricas, precedencia para misiones críticas y notificación en tiempo real ante eventos de fallo.
+
+### Reto 01: Streams Avanzados sobre Flota de 15 Drones
+
+Se implementó el componente ConsultorFlotaAvanzado aplicando operaciones avanzadas de la API de Streams para procesar, categorizar y optimizar la toma de decisiones sobre la flota ampliada.
+
+Aspectos implementados:
+* Enriquecimiento del modelo con el enum TipoDrone (Superficial, Semisumergido, Buceador) con capacidades de carga específicas y el enum Prioridad (Crítica, Alta, Normal, Baja).
+* Agrupación de drones disponibles por tipo de unidad mediante Collectors.groupingBy.
+* Determinación del drone óptimo para una zona específica combinando filtros de zona, compatibilidad técnica y selección de mayor batería mediante Comparator y max.
+* Cálculo del promedio de carga de batería por tipo de drone a través de Collectors.averagingDouble.
+* Separación de misiones críticas mediante Collectors.partitioningBy para garantizar tratamiento prioritario en el despacho.
+* Extracción y ordenamiento de las zonas geográficas únicas cubiertas por la flota activa usando map, distinct y sorted.
+* Validación automatizada mediante pruebas unitarias exhaustivas en ConsultorFlotaAvanzadoTest.
+
+![Streams Avanzados Prinplup](docs/img/reto1-pr.png)
+
+
 
 
 
