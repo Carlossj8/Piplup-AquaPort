@@ -102,7 +102,7 @@ Se definieron los requisitos nucleares para AquaPort MVP especificando el actor,
 
 ### Reto 07: Plantilla DOSW (Especificación de Requerimiento)
 
-Se documentó detalladamente la especificación formal del requerimiento funcional AP-01 utilizando el estándar de la plantilla institucional DOSW, alojada en el repositorio en `docs/word/Plantilla_Requerimientos_DOSW_EjercicioTHC.docx`.
+Se documentó detalladamente la especificación formal del requerimiento funcional AP-01 utilizando el estándar de la plantilla institucional DOSW, alojada en el repositorio en `docs/word/detalleRequerimientoPiplup`.
 
 Aspectos documentados en la plantilla:
 * Código y nombre: AP-01 Registrar misión de transporte de muestra.
@@ -375,6 +375,40 @@ Flujos e intercambios de datos etiquetados:
 * Técnico de Mantenimiento -> AquaPort v2: Actualización de estado del drone a mantenimiento o reparado.
 
 ![Diagrama de Contexto C4 v2](docs/img/reto5-pr.png)
+
+### Reto 06: Requisitos Funcionales, No Funcionales y MoSCoW (v2.0)
+
+Se definieron los requisitos para las capacidades autónomas y de monitoreo ambiental de la versión 2.0, analizando las tensiones de diseño y priorizando las entregas bajo la metodología MoSCoW.
+
+#### Requisitos Funcionales (RF)
+* RF-04 (Asignación automática de drones): El sistema evalúa la flota activa y asigna de manera autónoma el drone más apto según la estrategia vigente (mayor batería o aptitud por criticidad), notificando el resultado al operador y persistiendo la asignación.
+* RF-05 (Notificación automática de alertas de fallo): El sistema despacha automáticamente una alerta en tiempo real a los observadores suscritos (Centro de Control y Técnico de Mantenimiento) ante la detección de un drone en estado FALLO o cuando una misión crítica no encuentra unidades aptas.
+* RF-06 (Consulta de condiciones hídricas ambientales): El sistema consulta los parámetros de oleaje, turbidez y profundidad a la API externa de Condiciones Hídricas previo a autorizar el despacho hacia una zona hídrica.
+* RF-07 (Gestión técnica por Técnico de Mantenimiento): El Técnico de Mantenimiento consulta el registro de unidades con fallas reportadas y actualiza su estado operativo a Mantenimiento o Disponible una vez culminada la inspección física.
+
+#### Requisitos No Funcionales (RNF)
+* RNF-04 (Latencia de asignación autónoma): El algoritmo de asignación automática debe determinar la unidad óptima en menos de 400 milisegundos para una flota de hasta 30 drones, medido mediante JUnit 5 y assertTimeout.
+* RNF-05 (Tiempo de propagación de alertas): La notificación de fallo técnico debe emitirse a todos los observadores registrados en un lapso inferior a 100 milisegundos a partir de la detección del evento.
+* RNF-06 (Resiliencia ante fallos externos): La comunicación con la API externa de Condiciones Hídricas debe poseer un tiempo límite de espera (timeout) de 500 milisegundos y un mecanismo de contingencia con parámetros seguros por defecto ante caída del servicio externo.
+* RNF-07 (Calidad estática y deuda técnica): La base de código de la versión 2.0 debe mantener 0 bugs, 0 vulnerabilidades y una deuda técnica inferior a 30 minutos según el análisis estático en SonarQube/SonarCloud.
+
+#### Análisis de Tensión entre Requisitos (AP-07 vs. AP-08)
+* Tensión identificada: El requisito AP-07 estipula seleccionar siempre el drone con mayor batería disponible, mientras que AP-08 exige que las misiones CRÍTICAS reciban el drone técnicamente más apto para la zona (por ejemplo, Drone Semisumergido en aguas agitadas o Buceador para toma profunda), independientemente de si otra unidad posee un porcentaje mayor de carga.
+* Resolución arquitectónica: Se implementa precedencia jerárquica gobernada por el patrón Strategy. Para misiones de prioridad NORMAL o BAJA rige la estrategia MayorBateriaStrategy. Para misiones CRÍTICAS, la estrategia PrioridadCriticaStrategy filtra en primer orden los drones técnicamente compatibles con las condiciones y profundidad de la zona, y únicamente entre ese subconjunto apto selecciona el de mayor carga de batería, garantizando viabilidad técnica sin comprometer la seguridad de la misión.
+
+#### Priorización MoSCoW v2.0
+
+| Requisito | Tipo | Prioridad MoSCoW | Justificación |
+| :--- | :--- | :--- | :--- |
+| RF-04 | Funcional | Must Have | Es el núcleo de valor de la versión 2.0 al transicionar de despacho manual a flota autónoma. |
+| RF-05 | Funcional | Must Have | Esencial para la seguridad física de las unidades ante fallas e imposibilidad de asignación. |
+| RNF-04 | No Funcional | Must Have | Crítico para evitar cuellos de botella en la atención de solicitudes concurrentes de transporte. |
+| RNF-05 | No Funcional | Must Have | Indispensable para que el centro de control reaccione inmediatamente ante averías en el agua. |
+| RF-06 | Funcional | Should Have | Importante para la toma informada de decisiones según el estado del cuerpo hídrico. |
+| RF-07 | Funcional | Should Have | Relevante para reincorporar drones reparados al ciclo operativo de la flota. |
+| RNF-06 | No Funcional | Should Have | Necesario para aislar el sistema central de caídas temporales de la API ambiental externa. |
+| RNF-07 | No Funcional | Could Have | Deseable para preservar la salud estructural del código previa a la versión multi-embalse. |
+
 
 
 
