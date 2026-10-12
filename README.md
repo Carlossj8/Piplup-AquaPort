@@ -1044,6 +1044,35 @@ Resultados del análisis estático en SonarCloud:
 
 ![JaCoCo y SonarQube Enterprise](docs/img/reto13-em.png)
 
+### Reto 14: Auditoría de Arquitectura por Capas y Regla de Oro del Dominio (Empoleon)
+
+Se completó la auditoría estructural final de la arquitectura Enterprise en tres capas (Dominio, Aplicación e Infraestructura), verificando el aislamiento tecnológico, la dirección acíclica de dependencias y el cumplimiento de la regla de oro del dominio.
+
+Estructura y fronteras de capas auditadas:
+* Capa de Dominio (`com.eci.aquaport.dominio`):
+  * Responsabilidad: Núcleo puro del negocio que modela entidades inmutables (`Waypoint`, `TramoRuta`), ciclo de vida de misiones, puertos de extensión (`ProveedorCondicionesHidricas`, `DroneOperativo`) y la cadena de validación (`EslabonValidacion`).
+  * Regla de oro: Cero dependencias externas (`java.*` puro) y cero acoplamiento con capas superiores.
+* Capa de Aplicación (`com.eci.aquaport.aplicacion`):
+  * Responsabilidad: Orquestación de casos de uso Enterprise (`CoordinadorRutasEnterprise`, `AsignadorAutomatico`, `RegistradorMisiones`), analítica funcional con Streams y gestión de observadores.
+  * Dependencia: Depende exclusivamente del dominio mediante inyección por constructor; no instancia adaptadores ni clientes de infraestructura.
+* Capa de Infraestructura (`com.eci.aquaport.infraestructura`):
+  * Responsabilidad: Adaptadores de integración (`AdaptadorAPIHidrica`), clientes HTTP (`ClienteAPIExternaHidrica`) y repositorios de persistencia (`RepositorioMisionesMemoria`).
+  * Dependencia: Conoce e implementa las interfaces de dominio y aplicación, aislando librerías de red y formatos externos.
+
+Resultados de la auditoría automatizada (`auditar-solid.ps1`):
+* Imports en Dominio: 100% de imports pertenecientes al JDK estándar (`java.util.*`, `java.nio.charset.*`). 0 frameworks o librerías de terceros.
+* Aislamiento de Infraestructura: 0 referencias a clases de infraestructura encontradas dentro de dominio o aplicación.
+* Inyección de Dependencias: 100% de colaboradores inyectados exclusivamente vía constructor con `Objects.requireNonNull`, erradicando el uso de anotaciones mágicas o setters mutables.
+* Dirección de Dependencias:
+  $$\text{Infraestructura} \longrightarrow \text{Aplicación} \longrightarrow \text{Dominio} \longrightarrow \text{Java Puro}$$
+
+Conclusión del Ciclo Empoleon (Nivel 3):
+* 14 de 14 retos completados y auditados en la escala Enterprise (red de 60 drones, rutas multi-etapa con waypoints y resiliencia multi-embalse).
+* 84 pruebas automatizadas con 100% de éxito en Maven, Quality Gate de JaCoCo superado (90.1% líneas / 81.8% ramas) y SonarCloud con 0 bugs y 0 vulnerabilidades.
+
+![Auditoría de Arquitectura por Capas Enterprise](docs/img/reto14-em.png)
+
+
 
 
 
