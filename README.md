@@ -658,3 +658,4 @@ Mecanismos y configuraciones implementadas:
   * Archivo estructurado bajo el estándar Keep a Changelog y SemVer, consolidando los hitos y versiones `[1.0.0]` (Piplup), `[2.0.0]` (Prinplup) y `[3.0.0-enterprise]` (Empoleon).
 
 ![Git Log y Conventional Commits v3](docs/img/reto2-em.png)
+.
