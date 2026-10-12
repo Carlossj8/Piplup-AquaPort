@@ -834,6 +834,27 @@ Leyes UX aplicadas a la flota de 60 drones:
 * Ley de Jakob: Distribución alineada a estándares de monitoreo aeroespacial e hídrico (mapa vectorizado central, telemetría lateral y lista colapsable).
 * Ley de Doherty: Cálculos de ruta y filtrado reactivo en menos de 150 ms para mantener retroalimentación continua sin fricción.
 
+### Reto 09: Planificación del Sprint y Roadmap Enterprise en Jira (Empoleon)
+
+Se estructuró el backlog y el cronograma (Roadmap) de la versión Enterprise en Jira Software, organizando la entrega de valor mediante una épica contenedora, historias de usuario con criterios BDD y estimación en Story Points.
+
+Estructura de la entrega en Jira:
+* Épica contenedora: Red Multi-Embalse y Misiones Multi-Etapa Enterprise (Empoleon).
+* Historias de usuario planificadas:
+  * HU-08: Planificación y cálculo de trayectos multi-etapa con waypoints (5 SP).
+  * HU-09: Validación secuencial de pre-vuelo mediante Chain of Responsibility (5 SP).
+  * HU-10: Cifrado y auditoría de telemetría dinámica con Decorator (3 SP).
+  * HU-11: Integración desacoplada con API de sensores hídricos mediante Adapter (3 SP).
+  * HU-12: Analítica y optimización de flota de 60 drones con Java Streams (5 SP).
+* Definition of Done (DoD) Enterprise:
+  * Suite de pruebas JUnit 5 en verde (100% de éxito en build automatizado).
+  * Cobertura de pruebas auditada por JaCoCo $\ge 85\%$ en líneas y $\ge 75\%$ en ramas.
+  * Regla de oro del dominio cumplida: 0 librerías externas y 0 dependencias hacia infraestructura.
+  * Análisis de SonarQube con 0 bugs, 0 vulnerabilidades y Quality Gate superado.
+
+![Roadmap Enterprise en Jira](docs/img/reto9-em.png)
+
+
 
 
 
