@@ -736,5 +736,48 @@ Interacciones y Protocolos de Comunicación:
 
 ![Diagrama C4 Nivel 2 de Contenedores](docs/img/c4-contenedores-empoleon.png)
 
+### Reto 06: Requerimientos Funcionales, No Funcionales, MoSCoW y Tensiones Arquitectónicas (Empoleon)
+
+Se definieron los requerimientos formales para la operación a escala Enterprise de AquaPort (red multi-embalse de 60 drones), especificando metas cuantitativas de rendimiento y resiliencia, priorización bajo el marco MoSCoW y la resolución explícita de tensiones entre atributos de calidad.
+
+Requerimientos Funcionales Enterprise (RF-15 a RF-19):
+* RF-15 (Coordinación de Misiones Multi-Etapa): El sistema debe permitir la creación, planificación y seguimiento de misiones compuestas por secuencias ordenadas de tramos y waypoints intermedios, calculando la distancia acumulada, el consumo proyectado de energía y el tiempo estimado de arribo.
+* RF-16 (Validación Encadenada de Pre-condiciones): El sistema debe evaluar de forma secuencial y desacoplada las pre-condiciones de vuelo antes de autorizar cualquier misión (batería remanente, capacidad de carga útil según tipo de drone, estado activo de la zona y navegabilidad hídrica ambiental) mediante una cadena de responsabilidad extensible.
+* RF-17 (Extensión Dinámica de Capacidades de Drones): El sistema debe permitir la adición en tiempo de ejecución de comportamientos operativos especializados a cualquier unidad de la flota (auditoría no invasiva de telemetría y cifrado simétrico de payloads de vuelo) mediante composición con decoradores, sin modificar la estructura base de las entidades.
+* RF-18 (Integración Agnóstica con Sensores Hídricos Externos): El sistema debe consultar condiciones ambientales y de calidad de agua provenientes de APIs externas y proveedores foráneos mediante un puerto de dominio formal y adaptadores de infraestructura, garantizando que cambios en esquemas externos o nomenclaturas no impacten las reglas de negocio.
+* RF-19 (Analítica de Flota Enterprise con Streams): El sistema debe procesar la colección global de 60 drones y sus misiones mediante flujos paralelos y colectores personalizados en una sola pasada, calculando promedios de batería por zona, identificación de cuellos de botella de carga y trayectos de mayor consumo energético.
+
+Requerimientos No Funcionales Enterprise con SLAs Cuantitativos (RNF-11 a RNF-15):
+* RNF-11 (Disponibilidad y Resiliencia Operativa): La plataforma debe garantizar una disponibilidad de servicio del $99.9\%$ mensual (SLA de alta disponibilidad), con un tiempo máximo de recuperación ante fallos del despachador central (failover transparente) $\le 3$ segundos sin pérdida del estado de misiones en vuelo.
+* RNF-12 (Throughput e Ingesta de Telemetría): El subsistema de telemetría debe procesar concurrentemente las ráfagas continuas de 60 drones transmitiendo a una frecuencia de 5 Hz (300 muestras por segundo en régimen continuo) con una latencia de ingestión y registro $p99 \le 50$ milisegundos.
+* RNF-13 (Latencia de Validación y Despacho): La ejecución completa de la cadena de validación para autorizar una misión multi-etapa debe completarse en un tiempo $\le 15$ milisegundos ($p95$) bajo una carga de hasta 50 solicitudes de despacho concurrentes.
+* RNF-14 (Seguridad y Sobrecarga Criptográfica): Toda telemetría de drones con decorador de seguridad debe transmitirse con cifrado de carga útil a nivel de mensaje (AES-256 / Base64 seguro), restringiendo la degradación por cómputo criptográfico a un incremento $\le 5\%$ en el uso de CPU por ciclo de envío.
+* RNF-15 (Integridad Arquitectónica y Cobertura de Calidad): El núcleo de dominio debe mantener 0 dependencias externas a Java puro (`java.*`) y 0 referencias a paquetes de infraestructura, respaldado por una cobertura automatizada de pruebas $\ge 85\%$ en líneas y $\ge 75\%$ en ramas validada por JaCoCo y 0 incidencias bloqueantes en SonarQube.
+
+Priorización MoSCoW:
+
+| Categoría | Requerimientos | Justificación Técnica |
+| :--- | :--- | :--- |
+| Must Have | RF-15, RF-16, RNF-11, RNF-12, RNF-15 | Núcleo indispensable para la navegación segura de 60 drones, preservación de integridad de flota y aislamiento arquitectónico. |
+| Should Have | RF-17, RF-18, RNF-13, RNF-14 | Capacidades de seguridad operativa, integración con sensores de campo y tiempos de respuesta requeridos para operación concurrente fluida. |
+| Could Have | RF-19 | Optimización avanzada de balanceo de rutas y agregaciones analíticas de consumo para soporte a decisiones a largo plazo. |
+| Won't Have | Re-ruteo satelital autónomo fuera de cobertura 4G/5G | Excede el alcance de la red multi-embalse del campus en la fase actual; planificado para iteraciones futuras de despliegue rural. |
+
+Gestión de Tensiones Arquitectónicas Resueltas (Quality Attribute Trade-offs):
+
+Tensión 1: Seguridad y Trazabilidad en Tiempo Real (RF-17 / RNF-14) frente a Latencia y Rendimiento de Ingesta (RNF-12)
+* Conflicto: Aplicar cifrado de payload y registro exhaustivo de telemetría a cada mensaje generado por 60 drones a 5 Hz introduce sobrecarga de procesamiento en microcontroladores y satura los buffers del despachador central, arriesgando el umbral de latencia de 50 ms.
+* Alternativas analizadas:
+  1. Cifrar todo el tráfico y persistir sincrónicamente cada trama de telemetría (descartada: excede el presupuesto de tiempo de CPU y colapsa la cola de ingesta bajo alta carga).
+  2. Transmitir en texto plano sin decoradores para maximizar velocidad (descartada: vulnera la confidencialidad de misiones en zonas restringidas).
+* Decisión y mitigación: Composición dinámica mediante el patrón Decorator. Solo las unidades asignadas a tramos de alta criticidad o transporte de muestras sensibles incorporan `DroneConCifrado` y `DroneConMonitoreo`. Para misiones estándar se utiliza `DroneBaseOperativo`. Adicionalmente, el adaptador de telemetría desacopla la persistencia usando procesamiento asíncrono en lotes (batch inserts), cumpliendo simultáneamente RNF-12 y RNF-14.
+
+Tensión 2: Exhaustividad de Validación de Pre-condiciones con API Externa (RF-16 / RF-18) frente a Latencia y Resiliencia de Despacho (RNF-13 / RNF-11)
+* Conflicto: El eslabón `ValidadorCondicionesHidricas` consulta la navegabilidad en tiempo real consumiendo una API externa vía `ProveedorCondicionesHidricas`. La latencia de red de servicios remotos oscila habitualmente entre 100 ms y 300 ms, lo cual quebrantaría el límite de despacho de $\le 15$ ms y expondría la autorización a caídas externas.
+* Alternativas analizadas:
+  1. Consulta síncrona directa punto a punto en cada intento de vuelo (descartada: introduce acoplamiento temporal y bloquea hilos de despacho).
+  2. Omitir la validación hídrica remota y operar solo con supuestos fijos (descartada: pone en riesgo físico drones en embalses con turbidez o niveles fuera de rango).
+* Decisión y mitigación: Patrón Adapter combinado con Circuit Breaker y caché de lectura a corto plazo (TTL de 60 segundos) en la capa de infraestructura. La consulta externa se realiza de forma periódica desacoplada; `AdaptadorAPIHidrica` sirve lecturas validadas en memoria en $\le 1$ ms para la cadena de validación, garantizando que el despacho cumpla holgadamente con RNF-13. Si el servicio externo presenta fallos consecutivos, el circuito se abre y aplica una política de navegación defensiva sin interrumpir la disponibilidad global (RNF-11).
+
 
 
