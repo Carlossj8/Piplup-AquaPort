@@ -817,9 +817,6 @@ Aspectos documentados en la plantilla:
 
 ### Reto 08: Identidad Visual UX v3, Tokens de Diseño y Leyes UX (Empoleon)
 
-Diseño interactivo en Figma:
-* Prototipo y Mockups de AquaPort: [AquaPort Design en Figma](https://www.figma.com/design/uVsVA404xExLGsQVWIMstG/AquaPort?node-id=0-1&t=VThA5xRUpMyR7rHG-1)
-
 Tokens de diseño Enterprise v3:
 * Paleta técnica: Fondo canvas `#08202E`, tarjetas `#0F3144`, bordes `#1E4358`, barra superior `#0B4F6C`, acento interactivo `#19B5D1`, deshabilitado `#26434F`, alerta `#2A1A20` con borde `#FF5C61`.
 * Tipografía: `IBM Plex Sans` para interfaz general y textos descriptivos; `JetBrains Mono` para IDs de drones (`AR-XX`), waypoints, porcentajes y telemetría.
@@ -882,6 +879,119 @@ Elementos del modelo de casos de uso:
   * UC-08 extiende UC-01 ante indisponibilidad del drone asignado previo al despegue.
 
 ![Diagrama de Casos de Uso Extendido v3](docs/img/reto10-em.png)
+
+### Reto 11: Mocks de Alta Fidelidad y Flujo Enterprise en 5 Pantallas (Empoleon)
+
+Se diseñó con inteligencia artificial el flujo operativo completo de la versión Enterprise a través de 5 pantallas de alta fidelidad, modelando con rigor datos del dominio (identificadores de flota, zonas hídricas oficiales, tipos de carga, telemetría y reglas de negocio multi-etapa).
+
+Diseño interactivo en Figma:
+* Prototipo y Mockups de AquaPort: [AquaPort Design en Figma](https://www.figma.com/design/uVsVA404xExLGsQVWIMstG/AquaPort?node-id=0-1&t=VThA5xRUpMyR7rHG-1)
+
+Flujo operativo modelado en 5 pantallas:
+* Pantalla 1: Mapa de las 4 zonas hídricas con drones en tiempo real y supervisión global de flota.
+* Pantalla 2: Configuración de ruta multi-etapa con waypoints, carga y validación de pre-vuelo.
+* Pantalla 3: Monitoreo de progreso por tramo con telemetría en vivo cifrada a 5 Hz.
+* Pantalla 4: Alerta de fallo en waypoint intermedio con recálculo de desvío y reasignación automática visible.
+* Pantalla 5: Reporte final de misión con trazabilidad inmutable de la cadena de custodia.
+
+#### Pantalla 1: Mapa de las 4 Zonas Hídricas con Drones en Tiempo Real
+
+Prompt utilizado:
+```text
+Diseña el frame de escritorio "Pantalla 1 - Mapa Multi-Embalse y Flota en Tiempo Real" (1440x900 px) para AquaPort Enterprise en español. Dashboard técnico sin sombras ni fotos.
+Paleta de colores: fondo de lienzo #08202E, superficie de tarjetas #0F3144, borde divisorio #1E4358, barra superior #0B4F6C, acento interactivo #19B5D1, texto #E4F0F5, texto secundario #9DB8C5. Tipografías: IBM Plex Sans para la interfaz y JetBrains Mono para identificadores técnicos y telemetría.
+Estructura:
+Barra superior (64 px) con isotipo de AquaPort, estado del campus "Condiciones Hídricas: Normales (Temp: 19°C, Viento: 8 km/h)" y selector de rol "Operador Hídrico ECI".
+Fila de métricas clave: 60 Drones en flota (Disponibles: 38, En Misión: 14, Recargando: 5, Mantenimiento: 2, Fallo: 1).
+Área principal dividida en dos secciones:
+Izquierda (70%): Mapa vectorial esquemático con las 4 zonas hídricas principales del campus conectadas por canales: Embalse Norte (área 4.2 ha), Canal Central (longitud 1.8 km), Laguna Sur (área 3.1 ha) y Ribera Este / Laboratorio Hídrico. En cada zona se visualizan marcadores georreferenciados de drones en tiempo real con sus identificadores mono (ej. AR-04, AR-12, AR-27, AR-45), chips de estado semánticos (círculo verde Disponible, rombo azul En Misión, gota ámbar Recargando) y vectores de desplazamiento con rumbo.
+Derecha (30%): Panel lateral "Flota Activa por Zona" con acordeones colapsables para cada embalse. Muestra lista compacta de drones con ID mono, nivel de batería (barra con porcentaje exacto), tipo (Superficial, Semisumergido, Buceador) y botón superior "Configurar Misión Multi-Etapa" (#19B5D1, texto #04212B). Botón fijo inferior "Parada de Emergencia Global" (160x56 px, fondo #FF5C61, texto #1A0507).
+```
+
+#### Pantalla 2: Configuración de Ruta Multi-Etapa con Waypoints
+
+Prompt utilizado:
+```text
+Diseña el frame de escritorio "Pantalla 2 - Configuración de Ruta Multi-Etapa" (1440x900 px) para AquaPort Enterprise en español. Mantiene la paleta técnica oscura (#08202E, #0F3144, #19B5D1) y las tipografías IBM Plex Sans y JetBrains Mono.
+Encabezado con título "Planificación de Misión Multi-Etapa AP-15" y código autogenerado "Misión MS-2026-084".
+Dos columnas principales:
+Columna izquierda (50%): Formulario estructurado de la misión:
+- Selector de Drone Elegible: Seleccionado "AR-12 (Semisumergido, Batería: 94%, Ubicación actual: Laboratorio Hídrico)".
+- Especificación de Carga: Tipo "MUESTRA_AGUA", Peso "850 g" (límite 1500 g), Prioridad "ALTA", Recipiente "Contenedor Hermético Isotérmico #CH-04".
+- Activación de Decoradores de Seguridad: Checkboxes activos con badges técnicos "[X] DroneConMonitoreo (Auditoría de telemetría a 5 Hz)" y "[X] DroneConCifrado (Cifrado simétrico AES-256 de payloads)".
+Columna derecha (50%): Constructor visual del itinerario (Route Timeline) con 4 waypoints encadenados:
+1. W-01 (Origen): Laboratorio Hídrico (0 m, Salida y calibración inicial, 0 min).
+2. W-02: Embalse Norte - Sector Boya 3 (1,250 m, Operación: TOMA_MUESTRA hídrica a 2 m de profundidad, espera: 8 min).
+3. W-03: Estación de Recarga Canal Central (2,100 m, Operación: RECARGA_RAPIDA y transferencia de telemetría, espera: 15 min).
+4. W-04 (Destino): Laguna Sur - Punto Desembarque (1,450 m, Operación: PASO y entrega en laboratorio móvil).
+Debajo del timeline, tarjeta "Cálculo Consolidado del Trayecto": Distancia total: 4,800 m, Tiempo estimado de vuelo: 38 min, Consumo de batería proyectado: 41% (Batería final estimada: 53%, margen de reserva seguro >= 35%).
+Panel inferior: Checklist de evaluación previa en 4 eslabones (Batería, Capacidad, Zona Activa, Condiciones Hídricas) todos con icono check verde. Botón principal "Autorizar y Despachar Misión" (fondo #19B5D1, 56 px de alto) y botón "Modificar Waypoints" (borde #1E4358).
+```
+
+#### Pantalla 3: Monitoreo de Progreso por Tramo en Tiempo Real
+
+Prompt utilizado:
+```text
+Diseña el frame de escritorio "Pantalla 3 - Monitoreo de Progreso por Tramo en Tiempo Real" (1440x900 px) para AquaPort Enterprise en español. Estética técnica de centro de comando oscuro (#08202E, #0F3144).
+Barra superior fija con identificador de misión "Misión MS-2026-084 | Drone AR-12 [SHIELD-AES256]" y cronómetro de vuelo activo "Tiempo Transcurrido: 14m 22s | ETA: 23m 38s".
+Panel superior: Barra horizontal de progreso de la misión dividida en 3 tramos secuenciales:
+- Tramo 1 (W-01 -> W-02): Completado (1,250 m recorridos, muestra recolectada exitosamente).
+- Tramo 2 (W-02 -> W-03): EN CURSO (65% completado del tramo, en tránsito sobre Canal Central).
+- Tramo 3 (W-03 -> W-04): Pendiente.
+Cuerpo central en dos cuadrantes:
+Cuadrante izquierdo (60%): Vista cartográfica táctica con trazo de vector de ruta en color cian (#19B5D1). Drone AR-12 representado en movimiento entre W-02 y W-03, con cono de dirección, halo de alcance de telemetría y coordenadas exactas en mono (Lat: 4.7831° N, Lon: -74.0428° W).
+Cuadrante derecho (40%): Instrumental y Telemetría en Vivo (ingesta continua a 5 Hz):
+- Nivel de batería en tiempo real: 76% (gráfico de descarga lineal proyectada dentro del margen).
+- Velocidad actual: 16.4 km/h | Altitud / Profundidad: -0.6 m (modo semisumergido).
+- Parámetros del agua del tramo actual (Adapter API Hídrica): Nivel: 2.3 m (Seguro), Turbidez: 14 NTU (Óptima), Oleaje: 0.15 m.
+- Consola de Auditoría Cifrada: Ventana monoespaciada mostrando los últimos 3 paquetes de telemetría procesados por los decoradores: "Payload AES-256 verificado | Hash SHA-256 OK | Checksum válido".
+Botón inferior secundario: "Pausar Vuelo en Waypoint" y botón "Solicitar Telemetría Extendida".
+```
+
+#### Pantalla 4: Alerta de Fallo en Waypoint con Reasignación Automática Visible
+
+Prompt utilizado:
+```text
+Diseña el frame de escritorio "Pantalla 4 - Alerta de Fallo y Reasignación Automática en Waypoint" (1440x900 px) para AquaPort Enterprise en español. Dashboard técnico oscuro con elementos de alerta de alta visibilidad.
+Encabezado superior con banner de emergencia (#2A1A20, borde #FF5C61, texto #FFD6D8): "INCIDENCIA TÉCNICA DETECTADA: Estación de Recarga Waypoint W-03 fuera de servicio por falla eléctrica. Activando protocolo de resiliencia y re-enrutamiento autónomo."
+División en dos paneles:
+Panel izquierdo (55%): Mapa táctico que refleja la contingencia en tiempo real:
+- Waypoint W-03 original marcado con icono de alerta rojo intermitente (#FF5C61) y etiqueta "Estación Inaccesible (0/4 bahías operativas)".
+- Trazado de ruta anterior (en rojo atenuado punteado) cancelado.
+- Nuevo trazado de contingencia calculado en tiempo real (en color amarillo/ámbar #F5A524) desviando el vuelo de AR-12 hacia el waypoint alterno "W-03B Estación Ribera Este (Distancia adicional: +620 m)".
+Panel derecho (45%): Panel de Auditoría del Algoritmo de Reasignación Automática (Chain of Responsibility + Reasignador):
+- Tarjeta de Evaluación de Impacto: Batería actual de AR-12: 68%, consumo recalculado con desvío: 48%, batería final proyectada: 39% (cumple regla de negocio de reserva >= 35%).
+- Tarjeta de Reasignación de Bahía: "Bahía 2 en W-03B reservada automáticamente para AR-12 a las 14:48".
+- Registro cronológico de acciones autónomas:
+  1. [14:32:01] Sensor reporta fallo en W-03.
+  2. [14:32:02] Coordinador de Rutas invalida tramo W-02->W-03.
+  3. [14:32:03] Algoritmo evalúa W-03B como alternativa viable más cercana.
+  4. [14:32:04] Nueva ruta aprobada por ValidadorBateria.
+Botones de confirmación para el Operador Hídrico: Botón destacado "Confirmar Ruta de Contingencia Aprobada" (#19B5D1, texto #04212B) y botón "Instruir Retorno Inmediato a Base" (#FF5C61).
+```
+
+#### Pantalla 5: Reporte Final de Misión y Cadena de Custodia
+
+Prompt utilizado:
+```text
+Diseña el frame de escritorio "Pantalla 5 - Reporte Final de Misión y Cadena de Custodia" (1440x900 px) para AquaPort Enterprise en español. Estética técnica sobria y formal para auditoría científica (#08202E, #0F3144).
+Barra superior con título "Reporte de Misión Completada - Cadena de Custodia Inmutable" y badge de estatus verde "#34C77B" con texto "MISIÓN EXITOSA - CUSTODIA VERIFICADA".
+Contenido organizado en 3 bloques de auditoría:
+Bloque 1 (Superior): Ficha Técnica de la Misión:
+- Código de Misión: MS-2026-084 | Drone: AR-12 (Semisumergido) | Operador: Ing. C. Sánchez | Duración total: 47m 15s.
+- Distancia total recorrida: 5,420 m (incluyendo desvío a W-03B) | Batería consumida: 54% (Batería final: 40%).
+Bloque 2 (Central): Trazabilidad de la Cadena de Custodia de la Muestra:
+- Tabla formal de custodia con 4 tramos:
+  * W-01 Salida Lab: Calibración de frasco estéril #CH-04. Timestamp: 14:10:05.
+  * W-02 Embalse Norte: Toma de 850 ml de agua a 2 m. Temp: 18.2°C, Turbidez: 14 NTU. Hash de muestra: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855.
+  * W-03B Ribera Este: Recarga intermedia preventiva (12 min). Integridad de precinto térmico: INTACTO.
+  * W-04 Lab Central: Entrega física a custodia biológica. Hash de recepción coincidente.
+Bloque 3 (Inferior): Garantías de Seguridad y Conformidad Arquitectónica:
+- Panel con firmas criptográficas: "Cifrado en vuelo: AES-256 GCM | Firmas digitales: SHA-256 con clave de operador | Trazas de telemetría: 14,175 registros auditados sin alteraciones".
+- Botón principal de exportación "Descargar Certificado de Custodia PDF/A" (fondo #19B5D1, texto #04212B) y botón secundario "Registrar en Base de Datos Central" (borde #1E4358).
+```
+
+
 
 
 
