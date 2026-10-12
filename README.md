@@ -991,6 +991,61 @@ Bloque 3 (Inferior): Garantías de Seguridad y Conformidad Arquitectónica:
 - Botón principal de exportación "Descargar Certificado de Custodia PDF/A" (fondo #19B5D1, texto #04212B) y botón secundario "Registrar en Base de Datos Central" (borde #1E4358).
 ```
 
+### Reto 12: TDD en 3 Capas de la Arquitectura Enterprise (Empoleon)
+
+Se consolidó el ciclo de desarrollo guiado por pruebas (TDD) estructurado en tres capas arquitectónicas bien diferenciadas (Dominio puro, Lógica de Aplicación e Integración Enterprise con Infraestructura), utilizando JUnit 5 y Mockito.
+
+Estrategia de pruebas en 3 capas:
+* Capa 1 — Dominio puro (Unitarias sin frameworks):
+  * `PatronesEnterpriseTest`, `ValidadorMisionTest` y `FabricaDronesTest`.
+  * Verificación atómica de la Chain of Responsibility (`EslabonValidacion` y sus 4 eslabones: batería, capacidad de carga, zona activa y condiciones hídricas).
+  * Validación del patrón Decorator apilando `DroneConMonitoreo` y `DroneConCifrado` sobre `DroneBaseOperativo` preservando la identidad y verificando el payload cifrado AES-256.
+  * Inmutabilidad y restricciones de integridad en `Waypoint`, `TramoRuta` y `Mision`.
+* Capa 2 — Aplicación (Orquestación, Algoritmos y Streams):
+  * `CoordinadorRutasEnterpriseTest`, `AsignadorAutomaticoTest` y `ConsultorFlotaAvanzadoTest`.
+  * Verificación de las 5 consultas con Java Streams avanzados (eficiencia por zona, dron más exitoso, planificación de ruta multi-etapa y filtrado de flota).
+  * Comprobación del Collector personalizado `agrupadorBateriaPromedioPorZona()` calculando sumatorias y promedios en una sola pasada.
+* Capa 3 — Integración Enterprise (End-to-End desacoplada):
+  * `MisionMultiEtapaIntegracionTest`.
+  * Orquestación del flujo completo: formulación de ruta con waypoints en el coordinador, validación secuencial en los 4 eslabones conectada con el adaptador de infraestructura `AdaptadorAPIHidrica` (con cliente HTTP mockeado) y despacho de unidad decorada con cifrado.
+  * Verificación del escenario de contingencia ambiental cuando el sensor externo reporta turbidez excesiva (> 50 NTU) y detiene la cadena de validación.
+
+Resultados de la suite de pruebas:
+* Total de pruebas ejecutadas: 84 pruebas automatizadas (100% exitosas, 0 fallos, 0 errores).
+* Tiempo de ejecución: inferior a 5 segundos en entorno Maven local.
+* Aislamiento: 0 llamadas de red externas, garantizando pruebas deterministas y repetibles.
+
+![Pruebas TDD en 3 Capas Enterprise](docs/img/reto12-em.png)
+
+### Reto 13: JaCoCo Quality Gate y Análisis de Calidad SonarQube Enterprise (Empoleon)
+
+Se auditó la calidad interna y la cobertura de pruebas del sistema Enterprise en Maven con `jacoco-maven-plugin` y SonarCloud, garantizando que ninguna entrega rompa los umbrales mínimos de fiabilidad.
+
+Configuración del Quality Gate JaCoCo en `pom.xml`:
+* Fase de ejecución: `verify` (meta `check`).
+* Regla BUNDLE: Límite mínimo de `LINE` en 0.80 ($80\%$) y `BRANCH` en 0.80 ($80\%$).
+
+Métricas consolidadas de cobertura de código:
+* Cobertura de líneas: $90.1\%$ (455 de 505 líneas ejecutables cubiertas).
+* Cobertura de ramas de decisión: $81.8\%$ (189 de 231 ramas cubiertas).
+* Suite de pruebas: 84 pruebas automatizadas con 0 fallos y 0 errores.
+* Calidad por paquete:
+  * `com.eci.aquaport.dominio`: $96\%$ de cobertura de instrucciones y $91\%$ de ramas (núcleo inmutable y patrones Chain/Decorator auditados).
+  * `com.eci.aquaport.aplicacion`: $86\%$ de instrucciones y $84\%$ de ramas (Streams, orquestador y asignación autónoma).
+  * `com.eci.aquaport.infraestructura`: $82\%$ de instrucciones y $80\%$ de ramas (Adaptador y repositorios).
+
+Resultados del análisis estático en SonarCloud:
+* Estado del análisis: Quality Gate PASSED.
+* Bugs: 0 (Confiabilidad Rating A).
+* Vulnerabilidades: 0 (Seguridad Rating A).
+* Security Hotspots: 0 (100% revisados).
+* Code Smells: 0 incidencias bloqueantes o críticas (Mantenibilidad Rating A).
+* Duplicación de código: $< 1.5\%$.
+
+![JaCoCo y SonarQube Enterprise](docs/img/reto13-em.png)
+
+
+
 
 
 
