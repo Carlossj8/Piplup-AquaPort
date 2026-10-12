@@ -681,4 +681,31 @@ Resultados de pruebas unitarias con Mockito (`PatronesEnterpriseTest`):
 * Registro no invasivo de telemetría y apilamiento con cifrado de payloads.
 * Mapeo de valores límite de nivel de agua y turbidez en el adaptador.
 
-![Patrones de Diseno Enterprise v3](docs/img/reto3-em.png)
+![Patrones de Diseno Enterprise v3](docs/img/reto3-em.png)
+
+### Reto 04: Auditoría SOLID Completa de la Arquitectura Enterprise
+
+Se ejecutó una auditoría estricta de principios SOLID sobre los componentes de la versión Enterprise, verificando el aislamiento del dominio, la inyección de dependencias por constructor y el mapa de acoplamiento entre capas.
+
+Auditoría de los 5 principios SOLID:
+* Single Responsibility Principle (SRP):
+  * Cada clase posee una responsabilidad única y una sola razón de cambio: `ValidadorBateria` valida exclusivamente niveles de energía; `ValidadorCapacidadCarga` gestiona límites de masa por tipo de drone; `DroneConMonitoreo` audita trazas de telemetría sin interferir en el vuelo; `DroneConCifrado` aplica seguridad en tránsito.
+* Open/Closed Principle (OCP):
+  * El sistema está abierto a la extensión mediante abstracciones y cerrado a la modificación de código existente. La validación se extiende añadiendo nuevos eslabones a `EslabonValidacion`; el comportamiento del drone se extiende componiendo nuevos decoradores de `DecoradorDrone`; las políticas de asignación se amplían implementando `EstrategiaSeleccion`.
+* Liskov Substitution Principle (LSP):
+  * Todos los subtipos y componentes decorados sustituyen transparentemente a sus abstracciones: `DroneConMonitoreo` y `DroneConCifrado` cumplen íntegramente el contrato de `DroneOperativo`, retornando los atributos del drone y su telemetría sin efectos colaterales; cualquier eslabón de `EslabonValidacion` procesa misiones de manera intercambiable.
+* Interface Segregation Principle (ISP):
+  * Contratos granulares y desacoplados diseñados para el cliente: `ProveedorCondicionesHidricas` expone únicamente la consulta de navegabilidad ambiental; `ObservadorMision` restringe la notificación a eventos del ciclo de vida; `ClienteAPIExternaHidrica` delimita el consumo del sensor. No existen interfaces sobrecargadas.
+* Dependency Inversion Principle (DIP):
+  * Los módulos de alto nivel dependen de abstracciones puras: `ValidadorCondicionesHidricas` depende del puerto `ProveedorCondicionesHidricas`, no del adaptador ni de bibliotecas de red; `AsignadorAutomatico` depende de `EstrategiaSeleccion` y `ObservadorMision`.
+  * Constructor Injection obligatorio: La totalidad de los servicios reciben sus colaboradores exclusivamente vía constructor con `Objects.requireNonNull`, erradicando el uso de inyección por campos (`@Autowired`) o setters mutables.
+
+Regla de oro del Dominio Enterprise:
+* Cero dependencias externas: La auditoría manual y automatizada de imports en `com.eci.aquaport.dominio` confirmó únicamente dependencias sobre `java.*` puro (`java.util.*`, `java.nio.charset.*`).
+* Cero referencias a infraestructura: Ninguna clase de dominio ni de aplicación contiene referencias ni llamadas `new` hacia clases del paquete `infraestructura`.
+* Mapa de dependencias:
+  * `infraestructura` $\longrightarrow$ `dominio` y `aplicacion`.
+  * `aplicacion` $\longrightarrow$ `dominio`.
+  * `dominio` $\longrightarrow$ Java puro (independiente de frameworks y librerías).
+
+
