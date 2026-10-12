@@ -854,6 +854,36 @@ Estructura de la entrega en Jira:
 
 ![Roadmap Enterprise en Jira](docs/img/reto9-em.png)
 
+### Reto 10: Diagrama de Casos de Uso Extendido v3 UML (Empoleon)
+
+Se modeló la interacción y dinámica de la red multi-embalse mediante un Diagrama de Casos de Uso Extendido UML 2.5, incorporando actores humanos, sistemas externos e interdependencias entre casos nucleares.
+
+Elementos del modelo de casos de uso:
+* Límite del sistema: AquaPort Enterprise v3 (Multi-Embalse).
+* Actores:
+  * Actores primarios: Operador Hídrico ECI, Técnico de Mantenimiento y Supervisor de Centro de Control ECI.
+  * Sistemas externos: API Externa de Sensores Hídricos, Estaciones de Recarga en Waypoints y Sistema de Notificaciones ECI.
+* Casos de uso modelados:
+  * UC-01: Planificar y ejecutar misión multi-etapa con waypoints (caso nuclear).
+  * UC-02: Validar pre-condiciones de vuelo en cadena (Chain of Responsibility).
+  * UC-03: Evaluar navegabilidad ambiental de embalse (Adapter).
+  * UC-04: Extender dinámicamente seguridad y cifrado (Decorator AES-256).
+  * UC-05: Reservar bahía de recarga en waypoint intermedio.
+  * UC-06: Analizar optimización y balanceo de flota (Java Streams).
+  * UC-07: Despachar alerta crítica por fallo en tramo.
+  * UC-08: Reasignar automáticamente ruta por contingencia.
+* Relaciones «include» (dependencia obligatoria):
+  * UC-01 incluye UC-02 (la validación encadenada es prerrequisito estricto previo a autorizar el vuelo).
+  * UC-02 incluye UC-03 (el eslabón hídrico consulta forzosamente la navegabilidad ambiental).
+* Relaciones «extend» (comportamiento condicional):
+  * UC-04 extiende UC-01 cuando la prioridad es CRÍTICA o involucra muestras biológicas/químicas.
+  * UC-05 extiende UC-01 cuando la distancia acumulada de los tramos excede la capacidad de autonomía directa.
+  * UC-07 extiende UC-01 cuando la validación es rechazada o se reporta avería técnica en trayecto.
+  * UC-08 extiende UC-01 ante indisponibilidad del drone asignado previo al despegue.
+
+![Diagrama de Casos de Uso Extendido v3](docs/img/reto10-em.png)
+
+
 
 
 
