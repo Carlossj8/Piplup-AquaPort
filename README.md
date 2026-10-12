@@ -704,8 +704,37 @@ Regla de oro del Dominio Enterprise:
 * Cero dependencias externas: La auditoría manual y automatizada de imports en `com.eci.aquaport.dominio` confirmó únicamente dependencias sobre `java.*` puro (`java.util.*`, `java.nio.charset.*`).
 * Cero referencias a infraestructura: Ninguna clase de dominio ni de aplicación contiene referencias ni llamadas `new` hacia clases del paquete `infraestructura`.
 * Mapa de dependencias:
-  * `infraestructura` $\longrightarrow$ `dominio` y `aplicacion`.
-  * `aplicacion` $\longrightarrow$ `dominio`.
-  * `dominio` $\longrightarrow$ Java puro (independiente de frameworks y librerías).
+  * `infraestructura` $\longrightarrow` `dominio` y `aplicacion`.
+  * `aplicacion` $\longrightarrow` `dominio`.
+  * `dominio` $\longrightarrow` Java puro (independiente de frameworks y librerías).
+
+![Auditoria SOLID Enterprise v3](docs/img/reto4-em.png)
+
+### Reto 05: Diagrama C4 Nivel 2 (Contenedores) de AquaPort Enterprise
+
+Se modeló la arquitectura de contenedores (C4 Nivel 2) para AquaPort Enterprise, definiendo los subsistemas de ejecución, almacenes de persistencia, protocolos de transporte y fronteras de integración con los 4 sistemas externos del campus.
+
+Contenedores del Sistema AquaPort Enterprise:
+* Aplicación Principal (Core Backend Service - Java 21):
+  * Responsabilidad: Orquesta la planificación de rutas multi-etapa, coordina el ciclo de vida de misiones, ejecuta la Chain of Responsibility y despacha eventos a observadores.
+* Módulo de Telemetría (Telemetry Ingestion Service - Java):
+  * Responsabilidad: Procesa ráfagas continuas de telemetría provenientes de los 60 drones (con soporte de payloads seguros generados por decoradores), registra métricas y audita variaciones críticas de batería.
+* Adaptador de API Hídrica (Hydraulic Integration Adapter - Java):
+  * Responsabilidad: Implementa el puerto de dominio `ProveedorCondicionesHidricas`, aislando al núcleo de la API foránea de sensores y transformando esquemas en inglés a modelos puros de dominio.
+* Base de Datos de Misiones y Telemetría (PostgreSQL / Relational Store):
+  * Responsabilidad: Almacena el historial transaccional de misiones, coordenadas de waypoints, catálogo de los 60 drones y registros temporales de telemetría.
+
+Interacciones y Protocolos de Comunicación:
+* Operador Hídrico ECI $\rightarrow$ Aplicación Principal: `HTTPS / JSON` (Creación de misiones, monitoreo de trayectos multi-etapa).
+* Aplicación Principal $\rightarrow$ Base de Datos: `JDBC / TCP` (Consultas y persistencia de estados de misiones y unidades).
+* Aplicación Principal $\rightarrow$ Adaptador de API Hídrica: `In-Process Domain API / DTOs` (Consulta desacoplada de navegabilidad por zona).
+* Adaptador de API Hídrica $\rightarrow$ API Externa de Sensores Hídricos: `HTTPS / JSON` (Lectura de `waterLevel` y `turbidity`).
+* Flota de 60 Drones Autónomos $\rightarrow$ Módulo de Telemetría: `TLS / WSS / Payloads cifrados` (Transmisión continua de telemetría de vuelo).
+* Módulo de Telemetría $\rightarrow$ Base de Datos: `JDBC / Batch Inserts` (Almacenamiento eficiente de series de telemetría).
+* Aplicación Principal $\rightarrow$ Estaciones de Recarga en Waypoints: `MQTT / JSON` (Coordinación de transferencias de muestras y disponibilidad de bahías).
+* Aplicación Principal $\rightarrow$ Sistema de Notificaciones ECI: `HTTPS / Webhooks` (Despacho de alertas a Centro de Control y Técnico de Mantenimiento).
+
+![Diagrama C4 Nivel 2 de Contenedores](docs/img/c4-contenedores-empoleon.png)
+
 
 
