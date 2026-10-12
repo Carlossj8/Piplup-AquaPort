@@ -815,6 +815,27 @@ Aspectos documentados en la plantilla:
   * RN-02 (Reserva Energética Inviolable): Ningún plan de vuelo multi-etapa puede autorizarse con una batería remanente proyectada inferior al 35%.
   * RN-03 (Desacoplamiento y Reasignación): Ante una indisponibilidad física del drone antes del despegue, la misión multi-etapa preserva intacta la secuencia calculada de waypoints para ser reasignada a una nueva unidad compatible sin requerir re-configuración manual.
 
+### Reto 08: Identidad Visual UX v3, Tokens de Diseño y Leyes UX (Empoleon)
+
+Diseño interactivo en Figma:
+* Prototipo y Mockups de AquaPort: [AquaPort Design en Figma](https://www.figma.com/design/uVsVA404xExLGsQVWIMstG/AquaPort?node-id=0-1&t=VThA5xRUpMyR7rHG-1)
+
+Tokens de diseño Enterprise v3:
+* Paleta técnica: Fondo canvas `#08202E`, tarjetas `#0F3144`, bordes `#1E4358`, barra superior `#0B4F6C`, acento interactivo `#19B5D1`, deshabilitado `#26434F`, alerta `#2A1A20` con borde `#FF5C61`.
+* Tipografía: `IBM Plex Sans` para interfaz general y textos descriptivos; `JetBrains Mono` para IDs de drones (`AR-XX`), waypoints, porcentajes y telemetría.
+* Estados semánticos (color y forma): Disponible `#34C77B` (círculo), En Misión `#4C9BFF` (rombo), Recargando `#F5A524` (gota), Mantenimiento `#8C9AA3` (cuadrado), Fallo `#FF5C61` (triángulo), Sumergido `#1D4ED8` (ancla).
+* Umbrales de batería: Óptima $\ge 60\%$, Precaución $35\%-59\%$, Bloqueo preventivo $< 35\%$.
+* Componentes clave: Fleet Grid compacta para 60 drones (260x180 px), timeline horizontal de waypoints con tramos intermedios y chips de capacidades decoradas (`[SHIELD-AES256]`, `[AUDIT-LOG]`).
+
+Leyes UX aplicadas a la flota de 60 drones:
+* Ley de Miller: Partición de la flota de 60 drones en bloques por embalse y tarjetas sintetizadas en 4 datos clave (ID, estado, batería y tramo actual) para evitar sobrecarga de memoria de trabajo.
+* Ley de Hick: Filtros facetados por embalse, tipo y estado operativo, junto con pre-selección automática en un clic, reduciendo el tiempo de decisión ante múltiples unidades.
+* Ley de Fitts: Botones críticos de despacho y aborto de emergencia ubicados en zonas fijas con área táctil amplia (48 px) para agilizar la interacción bajo presión operativa.
+* Ley de Jakob: Distribución alineada a estándares de monitoreo aeroespacial e hídrico (mapa vectorizado central, telemetría lateral y lista colapsable).
+* Ley de Doherty: Cálculos de ruta y filtrado reactivo en menos de 150 ms para mantener retroalimentación continua sin fricción.
+
+
+
 
 
 
