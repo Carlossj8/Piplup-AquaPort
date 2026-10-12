@@ -779,5 +779,42 @@ Tensión 2: Exhaustividad de Validación de Pre-condiciones con API Externa (RF-
   2. Omitir la validación hídrica remota y operar solo con supuestos fijos (descartada: pone en riesgo físico drones en embalses con turbidez o niveles fuera de rango).
 * Decisión y mitigación: Patrón Adapter combinado con Circuit Breaker y caché de lectura a corto plazo (TTL de 60 segundos) en la capa de infraestructura. La consulta externa se realiza de forma periódica desacoplada; `AdaptadorAPIHidrica` sirve lecturas validadas en memoria en $\le 1$ ms para la cadena de validación, garantizando que el despacho cumpla holgadamente con RNF-13. Si el servicio externo presenta fallos consecutivos, el circuito se abre y aplica una política de navegación defensiva sin interrumpir la disponibilidad global (RNF-11).
 
+### Reto 07: Plantilla DOSW para Misiones Multi-Etapa con Waypoints (AP-15)
+
+Se completó la especificación formal del requerimiento de escala Enterprise AP-15 utilizando la plantilla institucional DOSW, alojada en el repositorio en `docs/word/detalleRequerimientoEmpoleon.docx`.
+
+Aspectos documentados en la plantilla:
+* Código y nombre: AP-15 Ejecutar misión multi-etapa con waypoints e itinerarios encadenados.
+* Actores: Operador Hídrico ECI (iniciador / supervisor) y Coordinador de Rutas Enterprise (proceso autónomo).
+* Estructura jerárquica de datos de entrada:
+  * mision.id: String (identificador único o UUID).
+  * mision.waypoints: Colección ordenada inmutable de objetos `Waypoint` (identificador, latitud, longitud, altitud, tiempoEsperaMinutos, tipoOperacion [RECARGA, TOMA_MUESTRA, PASO, INSPECCION]).
+  * mision.carga: Objeto `Carga` (peso en gramos [1 a 1500 g], tipo de carga y nivel de prioridad).
+  * mision.droneAsignadoId: String (identificador del drone de flota, ej. AR-01 a AR-60).
+  * mision.zonaOrigen y mision.zonaDestino: Zonas de navegación del campus multi-embalse.
+* Datos calculados de salida:
+  * rutaPlanificada: Lista de tramos calculados (`TramoRuta` con origen, destino, distanciaMetros, consumoBateriaEstimado, tiempoEstimadoMinutos).
+  * metricasConsolidadas: Distancia total acumulada en metros, consumo energético global proyectado (%) y duración estimada total incluyendo ventanas de permanencia operativa.
+  * resultadoValidacion: Estado de pre-vuelo emitido por la cadena de responsabilidad (`ResultadoValidacion` - APROBADA o RECHAZADA con código de eslabón causante y causal técnica).
+* Flujo básico de 8 pasos:
+  1. El Operador Hídrico formula la misión multi-etapa especificando la secuencia obligatoria de waypoints, prioridades y tipo de carga.
+  2. El Coordinador de Rutas Enterprise valida la consistencia espacial e instancia los tramos directos y de enlace intermedios (`TramoRuta`).
+  3. El sistema calcula las distancias geodésicas acumuladas, tiempos de vuelo estimados y el perfil de consumo de batería por cada tramo.
+  4. Se acciona la cadena de responsabilidad (`EslabonValidacion`) evaluando secuencialmente: nivel de batería remanente vs. consumo proyectado (`ValidadorBateria`), capacidad máxima según la tipología del drone (`ValidadorCapacidadCarga`), disponibilidad y estatus de zonas (`ValidadorZonaActiva`) y navegabilidad hidrológica (`ValidadorCondicionesHidricas`).
+  5. Cada eslabón valida su pre-condición y transfiere la ejecución al siguiente eslabón únicamente ante dictamen favorable.
+  6. Si la misión involucra transporte de muestras críticas o zonas restringidas, se componen dinámicamente los decoradores `DroneConMonitoreo` y `DroneConCifrado`.
+  7. El despachador reserva las ventanas operativas y bahías de recarga en los waypoints intermedios y transiciona la misión a estado `EN_CURSO` y la unidad a `EN_MISION`.
+  8. Se emiten las notificaciones del plan de vuelo a los observadores suscritos (Centro de Control ECI) y se habilita la ingesta continua de telemetría a 5 Hz.
+* Flujos alternos:
+  * FA-01 (Congestión o inactividad en Waypoint de recarga): Si un waypoint intermedio de recarga reporta indisponibilidad temporal, el despachador recalcula un tramo alterno de desvío hacia una estación secundaria o cancela el despacho si no existe margen de batería suficiente.
+  * FA-02 (Condiciones hídricas adversas en embalse de paso): Si el adaptador de sensores detecta turbidez o nivel fuera del rango de seguridad, el eslabón de condiciones hídricas interrumpe la cadena y deniega el despegue emitiendo alerta preventiva al operador.
+  * FA-03 (Batería proyectada insuficiente con margen de seguridad): Si la sumatoria del consumo estimado supera la energía disponible dejando menos del 35% de reserva final, el sistema rechaza el plan y requiere la inclusión de un waypoint de recarga intermedio.
+  * FA-04 (Degradación de telemetría en vuelo): Si se pierde enlace durante un tramo, el drone decorado preserva los payloads cifrados localmente y ejecuta navegación autónoma hacia el último waypoint verificado.
+* Reglas de negocio:
+  * RN-01 (Cadena de Custodia de Muestras): Toda toma de muestra en waypoints operativos debe registrar trazabilidad inmutable mediante hash y telemetría firmada en el reporte del tramo.
+  * RN-02 (Reserva Energética Inviolable): Ningún plan de vuelo multi-etapa puede autorizarse con una batería remanente proyectada inferior al 35%.
+  * RN-03 (Desacoplamiento y Reasignación): Ante una indisponibilidad física del drone antes del despegue, la misión multi-etapa preserva intacta la secuencia calculada de waypoints para ser reasignada a una nueva unidad compatible sin requerir re-configuración manual.
+
+
 
 
