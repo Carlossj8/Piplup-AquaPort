@@ -658,4 +658,27 @@ Mecanismos y configuraciones implementadas:
   * Archivo estructurado bajo el estándar Keep a Changelog y SemVer, consolidando los hitos y versiones `[1.0.0]` (Piplup), `[2.0.0]` (Prinplup) y `[3.0.0-enterprise]` (Empoleon).
 
 ![Git Log y Conventional Commits v3](docs/img/reto2-em.png)
-.
+
+### Reto 03: Patrones Chain of Responsibility + Decorator + Adapter Enterprise
+
+Se integraron tres patrones estructurales y de comportamiento para gestionar el ciclo de vida, la validación previa y el aislamiento tecnológico en la escala Enterprise.
+
+Patrones implementados:
+* Chain of Responsibility (Validación desacoplada en cadena):
+  * Eslabones configurados: `ValidadorBateria` ($\ge 35\%$) $\rightarrow$ `ValidadorCapacidadCarga` (límites de payload por tipo de unidad) $\rightarrow$ `ValidadorZonaActiva` (puntos operativos reconocidos en el campus) $\rightarrow$ `ValidadorCondicionesHidricas` (navegabilidad ambiental).
+  * Mecanismo: Cada eslabón evalúa su responsabilidad atómica; si detecta inconsistencia, interrumpe de inmediato la cadena retornando un `ResultadoValidacion` explicativo sin invocar los eslabones posteriores.
+* Decorator (Extensión dinámica de drones sin herencia rígida):
+  * Componente base: `DroneBaseOperativo` implementando la interfaz `DroneOperativo`.
+  * Decoradores apilables: `DroneConMonitoreo` (registra trazas históricas de telemetría sin alterar datos) y `DroneConCifrado` (encripta en Base64/AES simulado el payload de telemetría).
+  * Composición fluida: Admite anidamiento arbitrario como `DroneConCifrado(DroneConMonitoreo(droneBase))`, preservando la identidad, batería y zona del drone base.
+* Adapter (Aislamiento de API Hídrica Externa):
+  * Puerto de dominio: `ProveedorCondicionesHidricas` entregando el modelo de dominio puro `CondicionHidrica` (nivel de agua en metros, turbidez en NTU y navegabilidad).
+  * Adaptador concreto: `AdaptadorAPIHidrica` en la capa de infraestructura, traduciendo el contrato en inglés de `ClienteAPIExternaHidrica` (`waterLevel`, `turbidity`, `status`) y aislando al dominio de cambios en la API externa.
+
+Resultados de pruebas unitarias con Mockito (`PatronesEnterpriseTest`):
+* Detención de la cadena en el primer eslabón fallido verificando con `never()` que los siguientes no son invocados.
+* Aprobación integral de misiones válidas pasando por los 4 eslabones.
+* Registro no invasivo de telemetría y apilamiento con cifrado de payloads.
+* Mapeo de valores límite de nivel de agua y turbidez en el adaptador.
+
+![Patrones de Diseno Enterprise v3](docs/img/reto3-em.png)
