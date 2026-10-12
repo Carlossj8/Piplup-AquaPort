@@ -640,3 +640,21 @@ Justificación técnica del uso de Streams Paralelos:
 * Por qué no aplica en operaciones ordinarias de flota: Para la flota de 60 drones y decenas de misiones activas, el coste computacional de particionar los datos, transferirlos al `ForkJoinPool.commonPool()` y sincronizar la combinación final (`combiner`) genera una sobrecarga (*overhead*) que degrada el rendimiento en comparación con el procesamiento secuencial directo.
 
 ![Pruebas CoordinadorRutasEnterprise v3](docs/img/reto1-em.png)
+
+### Reto 02: Historial Trazable y Políticas GitFlow Enterprise
+
+Se implementaron los estándares de gobierno de código y trazabilidad del historial para la versión Enterprise, asegurando que cada commit actúe como un registro auditable de decisiones de arquitectura.
+
+Mecanismos y configuraciones implementadas:
+* Hook de Git para validación de Conventional Commits:
+  * Archivo versionado: `.githooks/commit-msg` activado mediante `git config core.hooksPath .githooks`.
+  * Validación por expresiones regulares sobre tipos canónicos: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`, `chore`, `revert`.
+  * Rechazo automático en tiempo de commit si el mensaje no cumple con la estructura `<tipo>(<ámbito>): <descripción>`.
+* Políticas de Branch Protection para `main` y `develop`:
+  * Bloqueo de push directo (requiere Pull Request formal con al menos 1 aprobación).
+  * Require status checks to pass before merging: Ejecución exitosa de la suite de pruebas unitarias (`mvn test`), Quality Gate de JaCoCo $\ge 80\%$ y análisis estático de SonarCloud.
+  * Estrategia de integración: Squash merge o rebase interactivo para mantener un historial lineal y atómico.
+* Trazabilidad documental con `CHANGELOG.md`:
+  * Archivo estructurado bajo el estándar Keep a Changelog y SemVer, consolidando los hitos y versiones `[1.0.0]` (Piplup), `[2.0.0]` (Prinplup) y `[3.0.0-enterprise]` (Empoleon).
+
+![Git Log y Conventional Commits v3](docs/img/reto2-em.png)

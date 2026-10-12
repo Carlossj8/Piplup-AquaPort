@@ -1,0 +1,30 @@
+#!/bin/sh
+# ==============================================================================
+# AquaPort Enterprise - Git Hook de validación de Conventional Commits
+# ==============================================================================
+
+COMMIT_MSG_FILE=$1
+COMMIT_MSG=$(head -n 1 "$COMMIT_MSG_FILE")
+
+# Patrón estricto de Conventional Commits
+PATTERN="^(feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert)(\([a-zA-Z0-9_\.\-]+\))?: .{1,100}$"
+
+if ! echo "$COMMIT_MSG" | grep -Eq "$PATTERN"; then
+    echo ""
+    echo "======================================================================"
+    echo " ERROR: El mensaje de commit no cumple con Conventional Commits."
+    echo "----------------------------------------------------------------------"
+    echo "Mensaje ingresado: \"$COMMIT_MSG\""
+    echo ""
+    echo "Estructura requerida: <tipo>(<ámbito opcional>): <descripción>"
+    echo "Tipos válidos: feat, fix, docs, style, refactor, perf, test, build, ci, chore, revert"
+    echo "Ejemplos válidos:"
+    echo "  feat: implementar CoordinadorRutasEnterprise"
+    echo "  test(rutas): agregar pruebas de custom collector"
+    echo "  docs: actualizar changelog y politicas de proteccion de ramas"
+    echo "======================================================================"
+    echo ""
+    exit 1
+fi
+
+exit 0
