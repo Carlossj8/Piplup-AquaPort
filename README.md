@@ -504,7 +504,59 @@ Estados modelados:
 * Estado Alerta (Prioridad Crítica): Despliegue de misión de alta prioridad sin unidades inmediatas en el punto de recolección, activación de banners de advertencia visual y reasignación de ruta prioritaria con notificación a Centro de Control.
 * Estado Sin Disponibles: Escenario de contingencia operativa con saturación de flota, alertas visuales de indisponibilidad técnica, cola de misiones en espera y sugerencias de rebalanceo de unidades.
 
-![Mocks de Asignación v2 en 3 Estados](docs/img/reto11-pr.png)
+#### P1
+![Mocks de Asignación v2 en 3 Estados](docs/img/reto11-1pr.png)
+
+Prompt usado:
+Continuando con AquaPort v2, usa los mismos colores, fuentes y estilos de este chat. Crea el frame "P1 Panel de flota" 1440x900, todo en español.
+
+Barra superior y fila de contadores como antes (Disponible 7, En misión 3, Recargando 2, Mantenimiento 1, Fallo 1, Sumergido 1). Arriba a la derecha, botón "Asignar misión" (#19B5D1). Botón fijo abajo a la derecha "Emergencia: detener flota", 160x56 px, fondo #FF5C61, texto #1A0507.
+
+15 drones en 3 secciones con título y conteo, tarjetas de 210x150 px en una fila por sección. Cada tarjeta: ID mono, chip de estado (forma + texto), batería con barra (≥60% verde, 35-59% amarillo, <35% rojo con advertencia) y zona.
+
+Superficial (6): SU-01 Disponible 92% Laboratorio Hídrico; SU-02 En misión 64% Canal Central; SU-03 Disponible 78% Laguna Sur; SU-04 Recargando 22% Embalse Norte; SU-05 Mantenimiento 80% Taller; SU-06 Disponible 47% Canal Central.
+Semisumergido (5): SM-01 En misión 71% Embalse Norte; SM-02 Disponible 65% Embalse Norte; SM-03 Disponible 88% Laboratorio Hídrico; SM-04 Fallo 54% Punto Ribereño Este (borde #FF5C61); SM-05 Disponible 41% Laguna Sur.
+Buceador (4): BU-01 Sumergido 58% Embalse Norte (#4F6FD6, media luna); BU-02 Disponible 83% Laguna Sur; BU-03 Recargando 15% Laboratorio Hídrico; BU-04 En misión 69% Canal Central.
+
+Sin imágenes ni sombras. Las tarjetas no disponibles con opacidad 72%.
+
+#### P2
+![Mocks de Asignación v2 en 3 Estados](docs/img/reto11-2pr.png)
+
+
+Prompt usado:
+Continuando con AquaPort v2, usa los mismos colores, fuentes y estilos de este chat. Crea el frame "P2 Detalle de misión" 1440x900, todo en español. Mantén la barra superior y el botón fijo "Emergencia: detener flota" (160x56 px, #FF5C61) abajo a la derecha.
+
+Título "Misión MS-0142" y, al lado, chip de prioridad "Alta" en #F5A524. Dos columnas.
+
+Columna izquierda, tarjeta "Datos de la misión": Zona: Embalse Norte; Condición del agua: Agitada; Carga: 1.2 kg; Tipo requerido: Semisumergido; Solicitada por: Operador Hídrico.
+
+Columna derecha, tarjeta "Drone recomendado por el sistema", borde 2 px #19B5D1: ID SM-03 en mono 28 px, chip Disponible, Semisumergido, batería 88% con barra verde, zona actual Laboratorio Hídrico. Debajo, bloque "Por qué se eligió" con 3 puntos con icono de check verde:
+- Tipo compatible con agua agitada
+- Carga de 1.2 kg dentro del máximo de 1.5 kg
+- Mayor batería entre 3 drones aptos (SM-03 88%, SM-02 65%, SM-05 41%)
+
+Abajo de la columna derecha: botón "Confirmar asignación" (56 px de alto, fondo #19B5D1, texto #04212B) y a su lado botón secundario "Cancelar" con borde #1E4358. Enlace de texto "Ver otros drones aptos" en #19B5D1.
+
+Sin imágenes ni sombras.
+
+#### P3
+![Mocks de Asignación v2 en 3 Estados](docs/img/reto11-3pr.png)
+
+
+Prompt usado:
+Continuando con AquaPort v2, usa los mismos colores, fuentes y estilos de este chat. Crea el frame "P3 Confirmación" 1440x900, todo en español. Mantén la barra superior y el botón fijo "Emergencia: detener flota" (160x56 px, #FF5C61) abajo a la derecha.
+
+Banner de ancho completo, fondo #0F3144, borde 1 px #34C77B, icono de check verde: "SM-03 asignado a la misión MS-0142" y debajo en #9DB8C5: "Embalse Norte · Carga 1.2 kg · Salida inmediata".
+
+Debajo, título "Flota actualizada" y contadores: Disponible 6, En misión 4, Recargando 2, Mantenimiento 1, Fallo 1, Sumergido 1. Resalta con borde #19B5D1 los contadores que cambiaron (Disponible bajó de 7 a 6, En misión subió de 3 a 4) mostrando "7 → 6" y "3 → 4".
+
+Debajo, el grupo Semisumergido (5 tarjetas de 210x150 px) con SM-03 ahora En misión, 88%, Embalse Norte, resaltada con borde 2 px #19B5D1 y la etiqueta "Actualizado": SM-01 En misión 71%; SM-02 Disponible 65%; SM-03 En misión 88%; SM-04 Fallo 54% (borde #FF5C61); SM-05 Disponible 41%.
+
+Botones: "Volver al panel" (estado de éxito, fondo #34C77B, texto #04212B, 56 px) y "Ver misión MS-0142" (secundario con borde).
+
+Sin imágenes ni sombras.
+
 
 ### Reto 12: TDD con Mockito para el AsignadorAutomático
 
@@ -547,3 +599,44 @@ Resolución de ramas amarillas (parcialmente cubiertas):
 * `CentroControlObserver` y `TecnicoMantenimientoObserver`: Se validaron las ejecuciones reales de logging y formateo de mensajes tanto para éxito como para alertas críticas en `ObservadoresRealesTest`.
 
 ![Reporte JaCoCo Quality Gate v2](docs/img/reto13-pr.png)
+
+### Reto 14: Análisis Estático con SonarQube / SonarCloud v2
+
+Se ejecutó la auditoría estática integral de la versión 2.0 (Prinplup) sobre SonarCloud asegurando el cumplimiento estricto del Quality Gate y las directrices de deuda técnica mínima.
+
+Indicadores de calidad alcanzados:
+* 0 Bugs en la lógica de selección autónoma y despacho de eventos.
+* 0 Vulnerabilidades de seguridad o exposiciones de datos sensibles.
+* 0 Security Hotspots en componentes de infraestructura y dominio.
+* Deuda técnica en 0 minutos (umbral requerido: menor a 30 minutos).
+* Duplicación de código en 0.0% (umbral requerido: menor al 5%).
+* Cobertura de pruebas superior al 90% en la plataforma SonarCloud.
+* Quality Gate: Passed.
+
+Buenas prácticas y prevención de hallazgos estáticos:
+* Uso de logging centralizado: Ausencia total de invocaciones directas a flujos de consola estándar (`System.out` / `System.err`) sustituidos por `java.util.logging.Logger` con niveles semánticos.
+* Inmutabilidad y diseño idiomático: Aplicación de Java Records para el modelado de datos de telemetría y misiones, garantizando inmutabilidad y reduciendo código boilerplate susceptible a errores.
+* Cero supresiones artificiales: No se recurrió a anotaciones `@SuppressWarnings` ni a exclusiones arbitrarias de análisis; la totalidad de las reglas se cumplió en el diseño de las clases.
+
+![Dashboard SonarQube v2 Passed](docs/img/reto14.png)
+
+## Nivel 3: Empoleon (Red Multi-Embalse y Escala Enterprise)
+
+En esta tercera y última evolución, AquaPort escala a nivel Enterprise para coordinar una red hídrica compuesta por 60 drones distribuidos en 4 zonas interconectadas: Embalse de Investigación (norte), Red de Canales (campus), Laguna de Reserva (sur) y Laboratorio Hídrico Central. Las misiones operan bajo esquemas multi-etapa con waypoints y traspasos automáticos entre tramos.
+
+### Reto 01: Streams y Lambdas para Rutas Multi-Etapa Enterprise
+
+Se implementó el componente `CoordinadorRutasEnterprise` en la capa de aplicación, procesando la coordinación de rutas multi-etapa y analítica avanzada mediante operaciones funcionales complejas de la API de Streams.
+
+Consultas y algoritmos implementados:
+* Eficiencia operativa por zona: Cálculo de la tasa porcentual de éxito (`misiones entregadas / misiones totales`) agrupada por zona de origen.
+* Historial de entregas exitosas: Identificación del drone con mayor volumen de entregas confirmadas combinando `filter`, `groupingBy` y `max(comparingByValue)`.
+* Planificación de ruta óptima multi-etapa: Algoritmo de asignación que recorre los `Waypoint` de la ruta, seleccionando y reservando de manera determinista el drone disponible con mayor nivel de batería para cada tramo específico.
+* Collector personalizado de una sola pasada (`agrupadorBateriaPromedioPorZona`): Implementación pura de `java.util.stream.Collector` mediante acumulador mutable por zona (`int[2]` con acumulador de batería y contador de unidades), procesando promedios en una sola pasada y admitiendo combinación segura en streams paralelos.
+* Carga de trabajo en tiempo real: Encadenamiento de `flatMap` sobre las colecciones de `Waypoint` pertenecientes a misiones con estado `EN_TRANSITO`.
+
+Justificación técnica del uso de Streams Paralelos:
+* Cuándo aplica: Resulta beneficioso en conjuntos masivos de datos ($N \ge 10^4$ elementos) sometidos a operaciones intensivas en CPU (cálculos de telemetría pura, filtrado pesado en memoria sin contención) donde el coste de paralelización es compensado por el multiprocesamiento.
+* Por qué no aplica en operaciones ordinarias de flota: Para la flota de 60 drones y decenas de misiones activas, el coste computacional de particionar los datos, transferirlos al `ForkJoinPool.commonPool()` y sincronizar la combinación final (`combiner`) genera una sobrecarga (*overhead*) que degrada el rendimiento en comparación con el procesamiento secuencial directo.
+
+![Pruebas CoordinadorRutasEnterprise v3](docs/img/reto1-em.png)

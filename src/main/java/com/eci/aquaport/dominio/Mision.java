@@ -1,5 +1,8 @@
 package com.eci.aquaport.dominio;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 
 public class Mision {
@@ -11,6 +14,7 @@ public class Mision {
     private final TipoCarga tipoCarga;
     private final EstadoMision estado;
     private final Prioridad prioridad;
+    private final List<Waypoint> waypoints;
 
     private Mision(Builder builder) {
         this.id = builder.id;
@@ -20,6 +24,7 @@ public class Mision {
         this.tipoCarga = builder.tipoCarga;
         this.estado = builder.estado;
         this.prioridad = builder.prioridad;
+        this.waypoints = builder.waypoints != null ? builder.waypoints : Collections.emptyList();
     }
 
     public String getId() {
@@ -50,6 +55,10 @@ public class Mision {
         return prioridad;
     }
 
+    public List<Waypoint> getWaypoints() {
+        return waypoints;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -73,6 +82,7 @@ public class Mision {
                 ", tipoCarga=" + tipoCarga +
                 ", estado=" + estado +
                 ", prioridad=" + prioridad +
+                ", waypoints=" + waypoints +
                 '}';
     }
 
@@ -84,6 +94,21 @@ public class Mision {
         private TipoCarga tipoCarga;
         private EstadoMision estado = EstadoMision.PENDIENTE;
         private Prioridad prioridad = Prioridad.NORMAL;
+        private List<Waypoint> waypoints = Collections.emptyList();
+
+        public Builder waypoints(List<Waypoint> waypoints) {
+            this.waypoints = waypoints != null ? List.copyOf(waypoints) : Collections.emptyList();
+            return this;
+        }
+
+        public Builder agregarWaypoint(Waypoint waypoint) {
+            if (waypoint != null) {
+                List<Waypoint> lista = new ArrayList<>(this.waypoints);
+                lista.add(waypoint);
+                this.waypoints = List.copyOf(lista);
+            }
+            return this;
+        }
 
         public Builder id(String id) {
             this.id = id;
