@@ -1072,7 +1072,7 @@ Conclusión del Ciclo Empoleon (Nivel 3):
 
 ![Auditoría de Arquitectura por Capas Enterprise](docs/img/reto14-em.png)
 
-
+.
 
 
 
